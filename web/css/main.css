@@ -1,0 +1,13 @@
+@font-face {
+    font-family: 'Open Sans Light';
+    font-style: normal;
+    font-weight: 200;
+    src: local('Open Sans Light'), url(../vendor/OpenSans-Light.ttf) format('truetype');
+}
+
+body {
+    font-family: "Open Sans Light", sans-serif;
+    background-color: #000000;
+    color: #95B771;
+    margin: 10mm 10mm 10mm 10mm;
+}
