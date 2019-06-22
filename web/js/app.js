@@ -1,15 +1,22 @@
-const client = {}
+function App() {
+}
 
-client.drawChart = () => {
-    let svg = client.prepareSvg("#chart", "chart-book")
+App.prototype.drawChart = function() {
+    let svg = this.prepareSvg("#chart", "chart-book")
     let bbox = svg.node().getBoundingClientRect()
+    console.log(bbox)
 }
 
-client.drawFrame = (svg) => {
+App.prototype.drawFrame = function(svg) {
 }
 
-client.prepareSvg = (containerSelector, name) => {
-    return d3.select(containerSelector)
-        .append("svg")
-        .attr("id", name)
+App.prototype.prepareSvg = function(containerSelector, name) {
+    return d3.select(containerSelector).append("svg").attr("id", name)
 }
+
+App.prototype.init = function() {
+    this.drawChart()
+}
+
+const app = new App()
+app.init()

@@ -1,6 +1,7 @@
-let bitmex = {};
+let Bitmex = function() {
+}
 
-bitmex.onAction = function(action, tableName, symbol, store, data) {
+Bitmex.prototype.prototype.onAction = function(action, tableName, symbol, store, data) {
     // Deltas before the getSymbol() call returns can be safely discarded.
     if (action !== 'partial' && !bitmex.isInitialized(tableName, symbol, store)) return [];
     // Partials initialize the table, so there's a different signature.
@@ -10,29 +11,28 @@ bitmex.onAction = function(action, tableName, symbol, store, data) {
     // and you should never see updates or deletes on them.
     const keys = store[tableName];
     if ((action === 'update' || action === 'delete') && keys.length === 0) {
-        throw new Error("The data in the store " + tableName + " is not keyed for " + action + "s. " +
-            "Please email support@bitmex.com if you see this.");
+        throw new Error("The data in the store " + tableName + " is not keyed for " + action + "s. ");
     }
 
     // This dispatches delete/insert/update.
 
-    const f = action === 'update' ? bitmex._update : action === 'partial' ? bitmex._partial : action === 'insert' ? bitmex._insert : action === 'delete' ? bitmex._delete : bitmex._fail;
+    const f = action === 'update' ? this._update : action === 'partial' ? this._partial : action === 'insert' ? this._insert : action === 'delete' ? this._delete : this._fail;
     return f(store[tableName], symbol, data.data, store[tableName]);
 };
 
-bitmex.isInitialized = function (tableName, symbol, store) {
+Bitmex.prototype.isInitialized = function (tableName, symbol, store) {
     return store[tableName] && store[tableName][symbol];
 };
 
-bitmex._delete = function (context, key, data, keys) {
-    return bitmex.removeFromStore.apply(null, arguments);
+Bitmex.prototype._delete = function (context, key, data, keys) {
+    return this.removeFromStore.apply(null, arguments);
 };
 
-bitmex._insert = function (context, key, data, keys) {
-    return bitmex.insertIntoStore.apply(null, arguments);
+Bitmex.prototype._insert = function (context, key, data, keys) {
+    return this.insertIntoStore.apply(null, arguments);
 };
 
-bitmex._partial = function (tableName, symbol, store, data) {
+Bitmex.prototype._partial = function (tableName, symbol, store, data) {
     if (!store[tableName]) store[tableName] = {};
     const dataArr = data.data || [];
     // Intitialize data.
@@ -45,25 +45,25 @@ bitmex._partial = function (tableName, symbol, store, data) {
     return dataArr;
 };
 
-bitmex._fail = function () {
+Bitmex.prototype._fail = function () {
     throw new Error("Unknown action dispatched")
 };
 
-bitmex._update = function (context, key, data, keys) {
-    return bitmex.updateStore.apply(null, arguments);
+Bitmex.prototype._update = function (context, key, data, keys) {
+    return this.updateStore.apply(null, arguments);
 };
 
-bitmex.insertIntoStore = function (context, key, newData) {
+Bitmex.prototype.insertIntoStore = function (context, key, newData) {
     const store = context[key] || [];
 
     // Create a new working object.
     const storeData = [].concat(store).concat(newData);
 
-    return bitmex.replaceStore(context, key, storeData);
+    return this.replaceStore(context, key, storeData);
 };
 
 
-bitmex.updateStore = function (context, key, newData, keys) {
+Bitmex.prototype.updateStore = function (context, key, newData, keys) {
     const store = context[key] || [];
 
     // Create a new working object.
@@ -94,10 +94,10 @@ bitmex.updateStore = function (context, key, newData, keys) {
         }
     }
 
-    return bitmex.replaceStore(context, key, storeData);
+    return this.replaceStore(context, key, storeData);
 };
 
-bitmex.removeFromStore = function(context, key, newData, keys) {
+Bitmex.prototype.removeFromStore = function(context, key, newData, keys) {
     const store = context[key] || [];
 
     // Create a new working object.
@@ -115,7 +115,7 @@ bitmex.removeFromStore = function(context, key, newData, keys) {
     return bitmex.replaceStore(context, key, storeData);
 };
 
-bitmex.replaceStore = function(context, key, newData) {
+Bitmex.prototype.replaceStore = function(context, key, newData) {
     // Store could be an array or singular object/model.
     if (!Array.isArray(context[key])) {
         // Not an array - simply replace with the first item in our new array.
@@ -127,11 +127,11 @@ bitmex.replaceStore = function(context, key, newData) {
     return context[key];
 };
 
-bitmex.updateItem = function(item, newData) {
+Bitmex.prototype.updateItem = function(item, newData) {
     return _.extend({}, item, newData);
 };
 
-bitmex.strip = function(book, numOrders) {
+Bitmex.prototype.strip = function(book, numOrders) {
     const asks = _.filter(book.data, {'side': 'Sell'});
     const bids = _.filter(book.data, {'side': 'Buy'});
     const topAsks = _.takeRight(asks, numOrders);
