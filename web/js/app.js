@@ -3,11 +3,18 @@ function App() {
 
 App.prototype.drawChart = function() {
     let svg = this.prepareSvg("#chart", "chart-book")
-    let bbox = svg.node().getBoundingClientRect()
-    console.log(bbox)
+    this.drawFrame(svg)
 }
 
 App.prototype.drawFrame = function(svg) {
+    let bbox = svg.node().getBoundingClientRect()
+    svg.append('rect')
+        .attr('x', 1)
+        .attr('y', 1)
+        .attr('width', bbox.width - 2)
+        .attr('height', bbox.height - 2)
+        .attr('stroke', '#95B771')
+
 }
 
 App.prototype.prepareSvg = function(containerSelector, name) {

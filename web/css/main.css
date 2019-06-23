@@ -11,3 +11,8 @@ body {
     color: #95B771;
     margin: 10mm 10mm 10mm 10mm;
 }
+
+#chart {
+    margin-top: 5mm;
+    margin-bottom: 5mm;
+}

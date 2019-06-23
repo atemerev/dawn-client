@@ -1,11 +1,11 @@
 let Bitmex = function() {
 }
 
-Bitmex.prototype.prototype.onAction = function(action, tableName, symbol, store, data) {
+Bitmex.prototype.onAction = function(action, tableName, symbol, store, data) {
     // Deltas before the getSymbol() call returns can be safely discarded.
-    if (action !== 'partial' && !bitmex.isInitialized(tableName, symbol, store)) return [];
+    if (action !== 'partial' && !this.isInitialized(tableName, symbol, store)) return [];
     // Partials initialize the table, so there's a different signature.
-    if (action === 'partial') return bitmex._partial(tableName, symbol, store, data);
+    if (action === 'partial') return this._partial(tableName, symbol, store, data);
 
     // Some tables don't have keys, like 'trade' and 'quote'. They are insert-only tables
     // and you should never see updates or deletes on them.
