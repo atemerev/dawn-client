@@ -1,0 +1,20 @@
+{
+  "name": "dawn-client",
+  "version": "1.0.0",
+  "description": "Dawn / monitor client",
+  "main": "index.js",
+  "scripts": {
+    "clean": "rm dist/bundle.js",
+    "start": "parcel src/index.html",
+    "build-prod": "parcel build src/index.html"
+  },
+  "author": "Alexander Temerev",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "crypto-js": "^3.1.9-1",
+    "d3": "^5.9.2"
+  },
+  "devDependencies": {
+    "parcel-bundler": "^1.12.3"
+  }
+}

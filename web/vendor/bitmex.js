@@ -1,4 +1,9 @@
 let Bitmex = function() {
+    this.WS_ENDPOINT = 'wss://www.bitmex.com/realtime'
+}
+
+Bitmex.prototype.connect(apiKey, secret) = {
+
 }
 
 Bitmex.prototype.onAction = function(action, tableName, symbol, store, data) {
