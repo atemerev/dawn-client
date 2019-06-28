@@ -1,9 +1,33 @@
-let Bitmex = function() {
+export let Bitmex = function() {
     this.WS_ENDPOINT = 'wss://www.bitmex.com/realtime'
+    this.connected = false
 }
 
-Bitmex.prototype.connect(apiKey, secret) = {
-
+Bitmex.prototype.connect = function(apiKey, secret) {
+    let instance = this
+    if (!this.connected) {
+        let ws = new WebSocket(this.WS_ENDPOINT)
+        this.ws = ws
+        ws.onopen = function (ev) {
+            console.log("WS connected: " + ev)
+            instance.connected = true
+            // todo send auth / subscription
+        }
+        ws.onmessage = function (msg) {
+            let data = msg.data
+            console.log(data)
+        }
+        ws.onclose = function (ev) {
+            console.log("WS closed: " + ev)
+            instance.connected = false
+        }
+        ws.onerror = function (err) {
+            console.log("WS error: " + err)
+            instance.connected = false
+        }
+    } else {
+        console.log("WS already connected; better disconnect first")
+    }
 }
 
 Bitmex.prototype.onAction = function(action, tableName, symbol, store, data) {
