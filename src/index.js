@@ -47,9 +47,10 @@ App.prototype._priceScale = function(svg, midPrice, span) {
     return scale
 }
 
-App.prototype.init = function() {
+App.prototype.init = async function() {
     this.drawChart()
-    this.bitmexClient.connect('test', 'test')
+    let ws = await this.bitmexClient.connect('test', 'test')
+    this.bitmexClient.subscribe(ws, ['orderBookL2:XBTUSD', 'trade:XBTUSD'])
 }
 
 // -------- init --------
@@ -63,4 +64,9 @@ const conf = {
 }
 
 const app = new App(conf)
-app.init()
+
+app.init().then(() => {
+    console.log("Client initialized")
+}).catch((err) => {
+    console.error(err)
+})

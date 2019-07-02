@@ -1,36 +1,35 @@
-export let Bitmex = function() {
+export let Bitmex = function () {
     this.WS_ENDPOINT = 'wss://www.bitmex.com/realtime'
-    this.connected = false
 }
 
-Bitmex.prototype.connect = function(apiKey, secret) {
-    let instance = this
-    if (!this.connected) {
+Bitmex.prototype.connect = function (apiKey, secret) {
+    return new Promise((resolve, reject) => {
         let ws = new WebSocket(this.WS_ENDPOINT)
-        this.ws = ws
         ws.onopen = function (ev) {
             console.log("WS connected: " + ev)
-            instance.connected = true
-            // todo send auth / subscription
+            resolve(ws)
+        }
+        ws.onerror = function (err) {
+            console.log("WS error: " + err)
+            reject(err)
+        }
+        ws.onclose = function (ev) {
+            console.log("WS closed: " + ev)
         }
         ws.onmessage = function (msg) {
             let data = msg.data
             console.log(data)
         }
-        ws.onclose = function (ev) {
-            console.log("WS closed: " + ev)
-            instance.connected = false
-        }
-        ws.onerror = function (err) {
-            console.log("WS error: " + err)
-            instance.connected = false
-        }
-    } else {
-        console.log("WS already connected; better disconnect first")
-    }
+    })
 }
 
-Bitmex.prototype.onAction = function(action, tableName, symbol, store, data) {
+Bitmex.prototype.subscribe = function (ws, channels) {
+    let requestObj = {"op": "subscribe", "args": channels}
+    let request = JSON.stringify(requestObj)
+    ws.send(request)
+}
+
+Bitmex.prototype.onAction = function (action, tableName, symbol, store, data) {
     // Deltas before the getSymbol() call returns can be safely discarded.
     if (action !== 'partial' && !this.isInitialized(tableName, symbol, store)) return [];
     // Partials initialize the table, so there's a different signature.
@@ -126,7 +125,7 @@ Bitmex.prototype.updateStore = function (context, key, newData, keys) {
     return this.replaceStore(context, key, storeData);
 };
 
-Bitmex.prototype.removeFromStore = function(context, key, newData, keys) {
+Bitmex.prototype.removeFromStore = function (context, key, newData, keys) {
     const store = context[key] || [];
 
     // Create a new working object.
@@ -144,7 +143,7 @@ Bitmex.prototype.removeFromStore = function(context, key, newData, keys) {
     return bitmex.replaceStore(context, key, storeData);
 };
 
-Bitmex.prototype.replaceStore = function(context, key, newData) {
+Bitmex.prototype.replaceStore = function (context, key, newData) {
     // Store could be an array or singular object/model.
     if (!Array.isArray(context[key])) {
         // Not an array - simply replace with the first item in our new array.
@@ -156,11 +155,11 @@ Bitmex.prototype.replaceStore = function(context, key, newData) {
     return context[key];
 };
 
-Bitmex.prototype.updateItem = function(item, newData) {
+Bitmex.prototype.updateItem = function (item, newData) {
     return _.extend({}, item, newData);
 };
 
-Bitmex.prototype.strip = function(book, numOrders) {
+Bitmex.prototype.strip = function (book, numOrders) {
     const asks = _.filter(book.data, {'side': 'Sell'});
     const bids = _.filter(book.data, {'side': 'Buy'});
     const topAsks = _.takeRight(asks, numOrders);
