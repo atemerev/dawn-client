@@ -1,5 +1,5 @@
 import * as d3 from "d3"
-import {Bitmex} from "./vendor/bitmex";
+import {Bitmex} from "./vendor/bitmex"
 
 function App(conf) {
     this.conf = conf
