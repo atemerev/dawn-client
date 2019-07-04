@@ -49,14 +49,14 @@ Bitmex.prototype._onMarketUpdate = function (obj) {
             this.market[symbol] = book
         }
         let side = e.side === 'Buy' ? 'bid' : 'offer'
-        if (action === 'partial' || action === 'update') {
-            book.putOrder(side, e.id, e.price, e.size)
+        if (action === 'partial' || action === 'insert') {
+            book.insertOrder(side, e.id, e.price, e.size)
+        } else if (action === 'update') {
+            book.updateOrder(side, e.id, e.price, e.size)
         } else if (action === 'delete') {
             book.deleteOrder(side, e.id)
         }
     })
-    let bLength = this.market['XBTUSD'].bids.length
-    let oLength = this.market['XBTUSD'].offers.length
 }
 
 Bitmex.prototype.subscribe = function (ws, channels) {

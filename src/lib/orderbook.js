@@ -1,22 +1,33 @@
 import _ from 'lodash'
 
-export let OrderBook = function(symbol, bids, offers) {
+export let OrderBook = function (symbol, bids, offers) {
     this.symbol = symbol
     this.bids = bids ? bids : []
     this.offers = offers ? offers : []
 }
 
-/**
- * Put order to order book. If order with the same ID exists, it gets replaced, otherwise it
- * is inserted in according to side and price.
- *
- * @param side Order side, 'bid' or 'offer'
- * @param id Order ID
- * @param price Order price
- * @param amount Order amount
- */
-OrderBook.prototype.putOrder = function(side, id, price, amount) {
-    this.deleteOrder(side, id)
+OrderBook.prototype.updateOrder = function (side, id, price, amount) {
+    let line = side === 'bid' ? this.bids : this.offers
+    let idxById = _.findIndex(line, (e) => e.id == id, 0)
+    if (amount == 0) {
+        // amount is zero, deleting order
+        this.deleteOrder(side, id)
+    } else if (idxById != -1) {
+        // order found, updating
+        let order = line[idxById]
+        if (price != undefined) {
+            order.price = price
+        }
+        if (amount != undefined) {
+            order.amount = amount
+        }
+    } else {
+        console.log('Error: order (update) not found. Id: ' + id + ', side: ' + side)
+    }
+}
+
+
+OrderBook.prototype.insertOrder = function (side, id, price, amount) {
     let line = side === 'bid' ? this.bids : this.offers
     let order = {'side': side, 'id': id, 'price': price, 'amount': amount}
     let idx = _.sortedIndexBy(line, order, (e) => e.price)
@@ -26,20 +37,17 @@ OrderBook.prototype.putOrder = function(side, id, price, amount) {
     line.splice(idx, 0, order)
 }
 
-/**
- * Delete order (by id) from order book. If order ID not found by side, does nothing
- *
- * @param side Order side, 'bid' or 'offer'
- * @param id Order id to remove.
- */
-OrderBook.prototype.deleteOrder = function(side, id) {
+OrderBook.prototype.deleteOrder = function (side, id) {
     let line = side === 'bid' ? this.bids : this.offers
     let idxById = _.findIndex(line, (e) => e.id == id, 0)
     if (idxById != -1) {
         line.splice(idxById, 1)
+    } else {
+        console.log('Error: order (delete) not found. Id: ' + id + ', side: ' + side)
     }
 }
 
-OrderBook.prototype.trim = function(maxOrders) {
+
+OrderBook.prototype.trim = function (maxOrders) {
     return new OrderBook(this.symbol, _.take(this.bids, maxOrders), _.take(this.offers, maxOrders))
 }

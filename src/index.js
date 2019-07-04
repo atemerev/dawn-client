@@ -3,15 +3,7 @@ import {Bitmex} from "./vendor/bitmex"
 
 function App(conf) {
     this.conf = conf
-    this.bitmexClient = new Bitmex(function (self, obj) {
-        let table = obj.hasOwnProperty('table') ? obj.table : ''
-        if (table.startsWith('orderBookL2')) {
-            let book = self.market['XBTUSD']
-            let trimmed = book.trim(10)
-            console.log(trimmed.bids)
-            console.log(trimmed.offers)
-        }
-    })
+    this.bitmexClient = new Bitmex()
 }
 
 App.prototype.drawChart = function() {
@@ -31,18 +23,31 @@ App.prototype._drawFrame = function(svg) {
         .attr('stroke', '#95B771')
 }
 
-App.prototype._drawPriceAxis = function(svg, midPrice, span) {
+App.prototype._mkTimeAxis = function(svg, midPrice, span) {
     let bbox = svg.node().getBoundingClientRect()
     let scale = this._priceScale(svg, midPrice, span)
     let axis = d3.axisBottom(scale)
         .tickSizeOuter(5)
         .tickPadding(9)
         .tickSize(-bbox.height + this.conf.timeAxisHeight, 0, 0)
+    return axis;
+}
+
+App.prototype._drawPriceAxis = function(svg, midPrice, span) {
+    let bbox = svg.node().getBoundingClientRect()
+    let axis = this._mkTimeAxis(svg, midPrice, span)
     let y = bbox.height - this.conf.timeAxisHeight
     svg.append("g")
         .attr("class", "price axis")
         .attr("transform", "translate(" + 0 + ", " + y + ")")
         .call(axis)
+}
+
+App.prototype._updatePriceAxis = function(midPrice, span) {
+    let svg = d3.select('svg#chart-book')
+    let axis = this._mkTimeAxis(svg, midPrice, span)
+    // let t = d3.transition().duration(150).ease(d3.easeLinear)
+    svg.select(".price").call(axis)
 }
 
 App.prototype._prepareSvg = function(containerSelector, name) {
@@ -56,6 +61,19 @@ App.prototype._priceScale = function(svg, midPrice, span) {
 }
 
 App.prototype.init = async function() {
+    let thisApp = this
+    let eventListener = function (self, obj) {
+        let table = obj.hasOwnProperty('table') ? obj.table : ''
+        if (table.startsWith('orderBookL2')) {
+            let book = self.market['XBTUSD']
+            let bid = book.bids[0].price
+            let offer = book.offers[0].price
+            let midPrice = (bid + offer) / 2
+            let span = 50
+            thisApp._updatePriceAxis(midPrice, span)
+        }
+    }
+    this.bitmexClient = new Bitmex(eventListener)
     this.drawChart()
     let ws = await this.bitmexClient.connect('test', 'test')
     this.bitmexClient.subscribe(ws, ['orderBookL2:XBTUSD', 'trade:XBTUSD'])
