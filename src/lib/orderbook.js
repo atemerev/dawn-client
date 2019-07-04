@@ -30,10 +30,8 @@ OrderBook.prototype.updateOrder = function (side, id, price, amount) {
 OrderBook.prototype.insertOrder = function (side, id, price, amount) {
     let line = side === 'bid' ? this.bids : this.offers
     let order = {'side': side, 'id': id, 'price': price, 'amount': amount}
-    let idx = _.sortedIndexBy(line, order, (e) => e.price)
-    if (line == this.bids) {
-        idx = line.length - idx
-    }
+    let iteratee = side === 'bid' ? (e) => -e.price : (e) => e.price
+    let idx = _.sortedIndexBy(line, order, iteratee)
     line.splice(idx, 0, order)
 }
 
