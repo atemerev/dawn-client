@@ -1,9 +1,9 @@
 import _ from 'lodash'
 
-export let OrderBook = function(symbol) {
+export let OrderBook = function(symbol, bids, offers) {
     this.symbol = symbol
-    this.bids = [] // descending
-    this.offers = [] // ascending
+    this.bids = bids ? bids : []
+    this.offers = offers ? offers : []
 }
 
 /**
@@ -38,4 +38,8 @@ OrderBook.prototype.deleteOrder = function(side, id) {
     if (idxById != -1) {
         line.splice(idxById, 1)
     }
+}
+
+OrderBook.prototype.trim = function(maxOrders) {
+    return new OrderBook(this.symbol, _.take(this.bids, maxOrders), _.take(this.offers, maxOrders))
 }

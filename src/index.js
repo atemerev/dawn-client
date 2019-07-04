@@ -3,7 +3,15 @@ import {Bitmex} from "./vendor/bitmex"
 
 function App(conf) {
     this.conf = conf
-    this.bitmexClient = new Bitmex()
+    this.bitmexClient = new Bitmex(function (self, obj) {
+        let table = obj.hasOwnProperty('table') ? obj.table : ''
+        if (table.startsWith('orderBookL2')) {
+            let book = self.market['XBTUSD']
+            let trimmed = book.trim(10)
+            console.log(trimmed.bids)
+            console.log(trimmed.offers)
+        }
+    })
 }
 
 App.prototype.drawChart = function() {

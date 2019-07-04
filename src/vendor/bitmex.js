@@ -1,12 +1,14 @@
 import {OrderBook} from '../lib/orderbook'
 import * as _ from "lodash";
 
-export let Bitmex = function () {
+export let Bitmex = function (eventListener) {
     this.WS_ENDPOINT = 'wss://www.bitmex.com/realtime'
     this.market = {} // Map[symbol, orderbook]
+    this.eventListener = eventListener
+    console.log("OK")
 }
 
-Bitmex.prototype.connect = function (apiKey, secret) {
+Bitmex.prototype.connect = function(apiKey, secret) {
     let self = this
     return new Promise((resolve, reject) => {
         let ws = new WebSocket(this.WS_ENDPOINT)
@@ -24,15 +26,17 @@ Bitmex.prototype.connect = function (apiKey, secret) {
         ws.onmessage = function (msg) {
             let text = msg.data
             let obj = JSON.parse(text)
-            let table = obj.table
-            if (table.startsWith('orderBookL2')) {
-                self._onMarketUpdate(obj)
+            if (obj.hasOwnProperty('table')) {
+                if (obj.table.startsWith('orderBookL2')) {
+                    self._onMarketUpdate(obj)
+                }
             }
+            self.eventListener(self, obj)
         }
     })
 }
 
-Bitmex.prototype._onMarketUpdate = function(obj) {
+Bitmex.prototype._onMarketUpdate = function (obj) {
     let data = obj.data
     let action = obj.action
     _.forEach(data, (e) => {
