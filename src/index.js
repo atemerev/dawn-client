@@ -4,16 +4,18 @@ import {Bitmex} from "./vendor/bitmex"
 function App(conf) {
     this.conf = conf
     this.bitmexClient = new Bitmex()
+    this.connected = false
 }
 
-App.prototype.drawChart = function() {
+
+App.prototype.drawInitial = function() {
     let svg = this._prepareSvg("#chart", "chart-book")
-    let conf = this.conf
     this._drawFrame(svg)
-    this._drawPriceAxis(svg, conf.midPrice, conf.span)
+    return svg
 }
 
-App.prototype._drawFrame = function(svg) {
+App.prototype._drawFrame = function() {
+    let svg = d3.select('svg#chart-book')
     let bbox = svg.node().getBoundingClientRect()
     svg.append('rect')
         .attr('x', 1)
@@ -33,7 +35,8 @@ App.prototype._mkTimeAxis = function(svg, midPrice, span) {
     return axis;
 }
 
-App.prototype._drawPriceAxis = function(svg, midPrice, span) {
+App.prototype._drawPriceAxis = function(midPrice, span) {
+    let svg = d3.select('svg#chart-book')
     let bbox = svg.node().getBoundingClientRect()
     let axis = this._mkTimeAxis(svg, midPrice, span)
     let y = bbox.height - this.conf.timeAxisHeight
@@ -62,6 +65,7 @@ App.prototype._priceScale = function(svg, midPrice, span) {
 
 App.prototype.init = async function() {
     let thisApp = this
+    this.drawInitial()
     let eventListener = function (self, obj) {
         let table = obj.hasOwnProperty('table') ? obj.table : ''
         if (table.startsWith('orderBookL2')) {
@@ -69,12 +73,15 @@ App.prototype.init = async function() {
             let bid = book.bids[0].price
             let offer = book.offers[0].price
             let midPrice = (bid + offer) / 2
-            let span = 50
-            thisApp._updatePriceAxis(midPrice, span)
+            if (!thisApp.connected) {
+                thisApp._drawPriceAxis(midPrice, conf.span)
+                thisApp.connected = true
+            } else {
+                thisApp._updatePriceAxis(midPrice, conf.span)
+            }
         }
     }
     this.bitmexClient = new Bitmex(eventListener)
-    this.drawChart()
     let ws = await this.bitmexClient.connect('test', 'test')
     this.bitmexClient.subscribe(ws, ['orderBookL2:XBTUSD', 'trade:XBTUSD'])
 }
@@ -82,7 +89,6 @@ App.prototype.init = async function() {
 // -------- init --------
 
 const conf = {
-    midPrice: 11120,
     span: 95,
     timeAxisHeight: 30,
     symbol: "XBTUSD",
