@@ -17,12 +17,29 @@ App.prototype.drawInitial = function() {
 App.prototype._drawFrame = function() {
     let svg = d3.select('svg#chart-book')
     let bbox = svg.node().getBoundingClientRect()
-    svg.append('rect')
+    svg.append('g')
+        .attr('class', 'book-frame')
+        .append('rect')
         .attr('x', 1)
         .attr('y', 1)
         .attr('width', bbox.width - 2)
         .attr('height', bbox.height - 2)
         .attr('stroke', '#95B771')
+}
+
+App.prototype._drawOrderDepth = function(svg, book) {
+    let bid = book.bids[0].price
+    let offer = book.offers[0].price
+    let midPrice = (bid + offer) / 2
+    let x = this._priceScale(svg, midPrice, conf.span)
+    let y = this._amountScale(svg)
+    let askArea = d3.area()
+        .curve(d3.curveStepBefore)
+        .x((d, i) => x(d.offers[i].price))
+        .y((d, i) => y(d.offers[i].amount))
+
+    svg.selectAll('g.depth').append()
+    svg.append("g").attr("class", "depth").attr("transform", "translate(" + 0 + "," + 200 + ")").data(book).call(askArea)
 }
 
 App.prototype._mkTimeAxis = function(svg, midPrice, span) {
@@ -63,9 +80,16 @@ App.prototype._priceScale = function(svg, midPrice, span) {
     return scale
 }
 
+App.prototype._amountScale = function(svg) {
+    let bbox = svg.node().getBoundingClientRect()
+    let scale = d3.scaleLog(2).domain(0, 1000000).range(0, bbox.height / 2)
+    return scale
+}
+
+
 App.prototype.init = async function() {
     let thisApp = this
-    this.drawInitial()
+    let svg = this.drawInitial()
     let eventListener = function (self, obj) {
         let table = obj.hasOwnProperty('table') ? obj.table : ''
         if (table.startsWith('orderBookL2')) {
@@ -78,9 +102,11 @@ App.prototype.init = async function() {
                 thisApp.connected = true
             } else {
                 thisApp._updatePriceAxis(midPrice, conf.span)
+                thisApp._drawOrderDepth(svg, book)
             }
         }
     }
+
     this.bitmexClient = new Bitmex(eventListener)
     let ws = await this.bitmexClient.connect('test', 'test')
     this.bitmexClient.subscribe(ws, ['orderBookL2:XBTUSD', 'trade:XBTUSD'])
