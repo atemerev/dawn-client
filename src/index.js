@@ -38,8 +38,11 @@ App.prototype._drawOrderDepth = function(svg, book) {
         .x((d, i) => x(d.offers[i].price))
         .y((d, i) => y(d.offers[i].amount))
 
-    svg.selectAll('g.depth').append()
-    svg.append("g").attr("class", "depth").attr("transform", "translate(" + 0 + "," + 200 + ")").data(book).call(askArea)
+    svg.selectAll('g.depth')
+        .append('path')
+        .data(book)
+        .attr('class', 'ask depth area')
+        .attr('d', askArea)
 }
 
 App.prototype._mkTimeAxis = function(svg, midPrice, span) {
@@ -62,6 +65,8 @@ App.prototype._drawPriceAxis = function(midPrice, span) {
         .attr("transform", "translate(" + 0 + ", " + y + ")")
         .call(axis)
 }
+
+App.prototype.
 
 App.prototype._updatePriceAxis = function(midPrice, span) {
     let svg = d3.select('svg#chart-book')
@@ -103,6 +108,7 @@ App.prototype.init = async function() {
             } else {
                 thisApp._updatePriceAxis(midPrice, conf.span)
                 thisApp._drawOrderDepth(svg, book)
+                svg.append("g").attr("class", "depth").attr("transform", "translate(" + 0 + "," + 200 + ")")
             }
         }
     }
