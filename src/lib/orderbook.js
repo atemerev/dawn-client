@@ -45,7 +45,6 @@ OrderBook.prototype.deleteOrder = function (side, id) {
     }
 }
 
-
 OrderBook.prototype.trim = function (maxOrders) {
     return new OrderBook(this.symbol, _.take(this.bids, maxOrders), _.take(this.offers, maxOrders))
 }

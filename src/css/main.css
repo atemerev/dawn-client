@@ -7,8 +7,6 @@
 
 body {
     font-family: "Open Sans Light", sans-serif;
-    background-color: #000000;
-    color: #95B771;
     margin: 10mm 10mm 10mm 10mm;
 }
 
@@ -22,22 +20,3 @@ svg {
     height: 350px;
 }
 
-.axis text,
-.tick text {
-    fill: #95B771;
-    stroke: none;
-    font-size: 11pt;
-    font-family: "Open Sans Light", sans-serif;
-}
-
-.tick text {
-    padding-top: 5px;
-}
-
-.axis path,
-.axis line {
-    fill: none;
-    stroke: #688450;
-    opacity: 0.3;
-    shape-rendering: crispEdges;
-}
