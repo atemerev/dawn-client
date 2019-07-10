@@ -44,7 +44,7 @@ const spec = {
 
     "axes": [
         {"orient": "bottom", "scale": "x"},
-        {"orient": "right", "scale": "y"}
+        {"orient": "right", "scale": "y", "grid": "true"}
     ],
 
     "marks": [
