@@ -29,7 +29,7 @@ class App {
         }
 
         this.bitmexClient = new Bitmex(eventListener)
-        let ws = await this.bitmexClient.connect('test', 'test')
+        let ws = await this.bitmexClient.connect('-8wFQuIdgNeJwdhrxfr58dvk', 'rvX8hVzDpf1m_ONXq1fC4iegyGYD3bgbZG1SksbuWYHD9qyq')
         this.bitmexClient.subscribe(ws, ['orderBookL2:XBTUSD', 'trade:XBTUSD'])
     }
 

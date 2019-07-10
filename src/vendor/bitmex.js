@@ -1,5 +1,7 @@
 import {OrderBook} from '../lib/orderbook'
 import * as _ from "lodash";
+import hmacSHA256 from 'crypto-js/hmac-sha256'
+import Hex from 'crypto-js/enc-hex'
 
 export let Bitmex = function (eventListener) {
     this.WS_ENDPOINT = 'wss://www.bitmex.com/realtime'
@@ -14,6 +16,9 @@ Bitmex.prototype.connect = function(apiKey, secret) {
         let ws = new WebSocket(this.WS_ENDPOINT)
         ws.onopen = function (ev) {
             console.log("WS connected: " + ev)
+            if (apiKey && apiKey !== '') {
+                this.authenticate(ws, apiKey, secret)
+            }
             resolve(ws)
         }
         ws.onerror = function (err) {
@@ -59,8 +64,28 @@ Bitmex.prototype._onMarketUpdate = function (obj) {
     })
 }
 
+Bitmex.prototype.authenticate = function(ws, apiKey, secret) {
+    let nonce = (new Date()).getTime()
+    let authObj = this._mkAuthMessage(nonce, apiKey, secret)
+    let authMsg = JSON.stringify(authObj)
+    ws.send(authMsg)
+}
+
 Bitmex.prototype.subscribe = function (ws, channels) {
     let requestObj = {"op": "subscribe", "args": channels}
     let request = JSON.stringify(requestObj)
     ws.send(request)
+}
+
+Bitmex.prototype._mkAuthMessage = function(nonce, apiKey, secret) {
+    let signature = mkSignature(nonce, secret, 'GET', '/realtime', '')
+    let args = [apiKey, nonce, signature]
+    return {"op": "authkey", "args": args}
+}
+
+Bitmex.prototype._mkSignature = function(nonce, secret, verb, path, body) {
+    let plain = verb + path + nonce + body
+    let hmac = hmacSHA256(plain, secret)
+    let hex = Hex.stringify(hmac)
+    return hex
 }
