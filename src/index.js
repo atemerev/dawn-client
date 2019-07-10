@@ -2,7 +2,6 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import {DepthChart} from './components/depthchart'
 import {Bitmex} from "./vendor/bitmex"
-import _ from 'lodash'
 
 class App {
 
@@ -13,16 +12,19 @@ class App {
     }
 
     async init() {
+        let lastTs = 0
         let eventListener = function (self, obj) {
             let table = obj.hasOwnProperty('table') ? obj.table : ''
             if (table.startsWith('orderBookL2')) {
-                let refBook = self.market['XBTUSD'].trim(50)
-                let refData = _.concat(refBook.bids, refBook.offers)
-                let chartData = {"book": refData}
-                ReactDOM.render(
-                    <DepthChart data={chartData} renderer='canvas'/>,
-                    document.getElementById('depth-chart-container')
-                )
+                let ts = (new Date()).getTime()
+                if (ts > lastTs + conf.throttleMs) {
+                    lastTs = ts
+                    let refBook = self.market['XBTUSD'].trim(50)
+                    ReactDOM.render(
+                        <DepthChart data={refBook} renderer='canvas'/>,
+                        document.getElementById('depth-chart-container')
+                    )
+                }
             }
         }
 
@@ -34,6 +36,7 @@ class App {
 }
 
 const conf = {
+    throttleMs: 100,
     span: 95,
     timeAxisHeight: 30,
     symbol: "XBTUSD",
