@@ -17,7 +17,7 @@ Bitmex.prototype.connect = function(apiKey, secret) {
         ws.onopen = function (ev) {
             console.log("WS connected: " + ev)
             if (apiKey && apiKey !== '') {
-                this.authenticate(ws, apiKey, secret)
+                self.authenticate(ws, apiKey, secret)
             }
             resolve(ws)
         }
@@ -78,14 +78,13 @@ Bitmex.prototype.subscribe = function (ws, channels) {
 }
 
 Bitmex.prototype._mkAuthMessage = function(nonce, apiKey, secret) {
-    let signature = mkSignature(nonce, secret, 'GET', '/realtime', '')
+    let signature = this._mkSignature(nonce, secret, 'GET', '/realtime', '')
     let args = [apiKey, nonce, signature]
-    return {"op": "authkey", "args": args}
+    return {"op": "authKey", "args": args}
 }
 
 Bitmex.prototype._mkSignature = function(nonce, secret, verb, path, body) {
     let plain = verb + path + nonce + body
     let hmac = hmacSHA256(plain, secret)
-    let hex = Hex.stringify(hmac)
-    return hex
+    return Hex.stringify(hmac)
 }

@@ -25,12 +25,14 @@ class App {
                         document.getElementById('depth-chart-container')
                     )
                 }
+            } else if (!table.startsWith('trade')) {
+                console.log(JSON.stringify(obj))
             }
         }
 
         this.bitmexClient = new Bitmex(eventListener)
-        let ws = await this.bitmexClient.connect('-8wFQuIdgNeJwdhrxfr58dvk', 'rvX8hVzDpf1m_ONXq1fC4iegyGYD3bgbZG1SksbuWYHD9qyq')
-        this.bitmexClient.subscribe(ws, ['orderBookL2:XBTUSD', 'trade:XBTUSD'])
+        let ws = await this.bitmexClient.connect('', '')
+        this.bitmexClient.subscribe(ws, ['orderBookL2:XBTUSD', 'trade:XBTUSD', 'order', 'position'])
     }
 
 }

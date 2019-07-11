@@ -11,3 +11,5 @@ node_modules/
 server/node_modules
 dist/
 .cache/
+yarn.lock
+yarn-error.log
