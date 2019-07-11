@@ -14,6 +14,9 @@ const spec = {
         },
         {
             "name": "offers"
+        },
+        {
+            "name": "orders"
         }
     ],
 
@@ -22,6 +25,7 @@ const spec = {
             "name": "x",
             "type": "linear",
             "range": "width",
+            "clamp": true,
             "nice": true,
             "zero": false,
             "domain": {
@@ -49,49 +53,67 @@ const spec = {
 
     "marks": [
         {
-            "type": "area",
-            "from": {"data": "bids"},
-            "key": "price",
-            "sort": {"field": "datum.price", "order": "ascending"},
-            "encode": {
-                "enter": {
-                    // "x": {"scale": "x", "field": "price"},
-                    // "y": {"scale": "y", "field": "amount"},
-                    // "y2": {"scale": "y", "value": 0},
-                    "strokeWidth": {"value": 2},
-                    "fill": {"value": "#aec7e8"}
+            "type": "group",
+            "marks": [
+                {
+                    "type": "area",
+                    "from": {"data": "bids"},
+                    "key": "price",
+                    "sort": {"field": "datum.price", "order": "ascending"},
+                    "encode": {
+                        "enter": {
+                            // "x": {"scale": "x", "field": "price"},
+                            // "y": {"scale": "y", "field": "amount"},
+                            // "y2": {"scale": "y", "value": 0},
+                            "strokeWidth": {"value": 2},
+                            "fill": {"value": "#aec7e8"}
+                        },
+                        "update": {
+                            "x": {"scale": "x", "field": "price"},
+                            "y": {"scale": "y", "field": "amount"},
+                            "y2": {"scale": "y", "value": 0},
+                            "interpolate": {"value": "step-before"},
+                            "fillOpacity": {"value": 1}
+                        }
+                    }
                 },
-                "update": {
-                    "x": {"scale": "x", "field": "price"},
-                    "y": {"scale": "y", "field": "amount"},
-                    "y2": {"scale": "y", "value": 0},
-                    "interpolate": {"value": "step-before"},
-                    "fillOpacity": {"value": 1}
+                {
+                    "type": "area",
+                    "from": {"data": "offers"},
+                    "key": "price",
+                    "sort": {"field": "datum.price", "order": "ascending"},
+                    "encode": {
+                        "enter": {
+                            // "x": {"scale": "x", "field": "price"},
+                            // "y": {"scale": "y", "field": "amount"},
+                            // "y2": {"scale": "y", "value": 0},
+                            "strokeWidth": {"value": 2},
+                            "fill": {"value": "#ffbb78"}
+                        },
+                        "update": {
+                            "x": {"scale": "x", "field": "price"},
+                            "y": {"scale": "y", "field": "amount"},
+                            "y2": {"scale": "y", "value": 0},
+                            "interpolate": {"value": "step-after"},
+                            "fillOpacity": {"value": 1}
+                        }
+                    }
+                },
+                {
+                    "type": "rect",
+                    "from": {"data": "orders"},
+                    "encode": {
+                        "enter": {
+                            "x": {"scale": "x", "field": "price"},
+                            "width": {"value": 2},
+                            "y": {"scale": "y", "value": 100000},
+                            "y2": {"scale": "y", "value": 0},
+                        }
+                    }
                 }
-            }
+
+            ]
         },
-        {
-            "type": "area",
-            "from": {"data": "offers"},
-            "key": "price",
-            "sort": {"field": "datum.price", "order": "ascending"},
-            "encode": {
-                "enter": {
-                    // "x": {"scale": "x", "field": "price"},
-                    // "y": {"scale": "y", "field": "amount"},
-                    // "y2": {"scale": "y", "value": 0},
-                    "strokeWidth": {"value": 2},
-                    "fill": {"value": "#ffbb78"}
-                },
-                "update": {
-                    "x": {"scale": "x", "field": "price"},
-                    "y": {"scale": "y", "field": "amount"},
-                    "y2": {"scale": "y", "value": 0},
-                    "interpolate": {"value": "step-after"},
-                    "fillOpacity": {"value": 1}
-                }
-            }
-        }
     ]
 
 

@@ -13,6 +13,7 @@ class App {
 
     async init() {
         let lastTs = 0
+        let chartData = {'bids': [], 'offers': [], 'orders': []}
         let eventListener = function (self, obj) {
             let table = obj.hasOwnProperty('table') ? obj.table : ''
             if (table.startsWith('orderBookL2')) {
@@ -20,18 +21,28 @@ class App {
                 if (ts > lastTs + conf.throttleMs) {
                     lastTs = ts
                     let refBook = self.market['XBTUSD'].trim(50)
+                    Object.assign(chartData, {'bids': refBook.bids, 'offers': refBook.offers})
+                    let dataCopy = Object.assign({}, chartData)
                     ReactDOM.render(
-                        <DepthChart data={refBook} renderer='canvas'/>,
+                        <DepthChart data={dataCopy} renderer='canvas'/>,
                         document.getElementById('depth-chart-container')
                     )
                 }
+            } else if (table === 'order' && obj.action === 'partial') {
+                let myOrders = obj.data
+                Object.assign(chartData, {'orders': myOrders})
+                let dataCopyOrders = Object.assign({}, chartData)
+                // ReactDOM.render(
+                //     <DepthChart data={dataCopyOrders} renderer='canvas'/>,
+                //     document.getElementById('depth-chart-container')
+                // )
             } else if (!table.startsWith('trade')) {
                 console.log(JSON.stringify(obj))
             }
         }
 
         this.bitmexClient = new Bitmex(eventListener)
-        let ws = await this.bitmexClient.connect('', '')
+        let ws = await this.bitmexClient.connect('VRljkeAiXH80mRndOA0TuBfY', 'sgJWLHhtOiIGXYJaeEhtLLMLFiH_aSawmI7lwLswHSsm_r1M')
         this.bitmexClient.subscribe(ws, ['orderBookL2:XBTUSD', 'trade:XBTUSD', 'order', 'position'])
     }
 
