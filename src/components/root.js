@@ -49,7 +49,7 @@ export class Root extends React.Component {
                 let dataCopyOrders = Object.assign({}, chartData)
                 this.setState({chartData: dataCopyOrders})
             }
-        }
+        }.bind(this)
 
         this.bitmexClient = new Bitmex(eventListener)
         // let ws = await this.bitmexClient.connect('VRljkeAiXH80mRndOA0TuBfY', 'sgJWLHhtOiIGXYJaeEhtLLMLFiH_aSawmI7lwLswHSsm_r1M')
