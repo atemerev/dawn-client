@@ -2,6 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import {DepthChart} from './components/depthchart'
 import {Bitmex} from "./vendor/bitmex"
+import * as _ from "lodash";
 
 class App {
 
@@ -12,6 +13,7 @@ class App {
     }
 
     async init() {
+        let app = this
         let lastTs = 0
         let chartData = {'bids': [], 'offers': [], 'orders': []}
         let eventListener = function (self, obj) {
@@ -20,7 +22,7 @@ class App {
                 let ts = (new Date()).getTime()
                 if (ts > lastTs + conf.throttleMs) {
                     lastTs = ts
-                    let refBook = self.market['XBTUSD'].trim(50)
+                    let refBook = self.market['XBTUSD'].trim(app.conf.trimOrders)
                     Object.assign(chartData, {'bids': refBook.bids, 'offers': refBook.offers})
                     let dataCopy = Object.assign({}, chartData)
                     ReactDOM.render(
@@ -29,7 +31,7 @@ class App {
                     )
                 }
             } else if (table === 'order' && obj.action === 'partial') {
-                let myOrders = obj.data
+                let myOrders = _.values(self.tables.order)
                 Object.assign(chartData, {'orders': myOrders})
                 let dataCopyOrders = Object.assign({}, chartData)
                 // ReactDOM.render(
@@ -49,7 +51,8 @@ class App {
 }
 
 const conf = {
-    throttleMs: 100,
+    throttleMs: 150,
+    trimOrders: 200,
     span: 95,
     timeAxisHeight: 30,
     symbol: "XBTUSD",

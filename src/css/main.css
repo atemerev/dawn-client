@@ -20,3 +20,16 @@ svg {
     height: 350px;
 }
 
+h1 {
+    font-size: 17pt;
+    font-weight: 200;
+}
+
+footer {
+    margin-top: 1em;
+    font-size: 10pt;
+}
+
+form.loginForm > label {
+    margin-right: 0.5em;
+}

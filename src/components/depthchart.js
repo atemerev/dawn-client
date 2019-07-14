@@ -26,7 +26,7 @@ const spec = {
             "type": "linear",
             "range": "width",
             "clamp": true,
-            "nice": true,
+            // "nice": true,
             "zero": false,
             "domain": {
                 "fields": [
@@ -48,7 +48,7 @@ const spec = {
 
     "axes": [
         {"orient": "bottom", "scale": "x"},
-        {"orient": "right", "scale": "y", "grid": "true"}
+        {"orient": "right", "scale": "y"}
     ],
 
     "marks": [
@@ -106,12 +106,17 @@ const spec = {
                         "enter": {
                             "x": {"scale": "x", "field": "price"},
                             "width": {"value": 2},
-                            "y": {"scale": "y", "value": 100000},
+                            "opacity": {"value": 0.8},
+                            "strokeWidth": {"value": 0},
+                            "fill": {"value": "#66AA66"},
+                            "y": {"scale": "y", "value": 200000},
                             "y2": {"scale": "y", "value": 0},
+                        },
+                        "update": {
+                            "x": {"scale": "x", "field": "price"},
                         }
                     }
                 }
-
             ]
         },
     ]

@@ -6,6 +6,11 @@ import Hex from 'crypto-js/enc-hex'
 export let Bitmex = function (eventListener) {
     this.WS_ENDPOINT = 'wss://www.bitmex.com/realtime'
     this.market = {} // Map[symbol, orderbook]
+    this.tables = {
+        'order': {},
+        'position': {},
+        'trade': {}
+    }
     this.eventListener = eventListener
     console.log("OK")
 }
@@ -31,9 +36,20 @@ Bitmex.prototype.connect = function(apiKey, secret) {
         ws.onmessage = function (msg) {
             let text = msg.data
             let obj = JSON.parse(text)
+            let table = obj.table
+            let action = obj.action
             if (obj.hasOwnProperty('table')) {
-                if (obj.table.startsWith('orderBookL2')) {
+                if (table.startsWith('orderBookL2')) {
                     self._onMarketUpdate(obj)
+                } else if (table === 'order' || table === 'position') {
+                    let key = table === 'order' ? 'orderID' : 'symbol'
+                    if (action === 'partial') {
+                        self.tables[table] = _.keyBy(obj.data, key)
+                    } else if (action === 'insert' || action === 'update') {
+                        Object.assign(self.tables[table], _.keyBy(obj.data, key))
+                    } else if (action === 'delete') {
+                        obj.data.map((e) => e['orderID']).forEach(key => delete self.tables[table][key])
+                    }
                 }
             }
             self.eventListener(self, obj)
