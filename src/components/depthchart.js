@@ -3,8 +3,8 @@ import {createClassFromSpec} from 'react-vega'
 
 const spec = {
     "$schema": "https://vega.github.io/schema/vega/v5.json",
-    "autosize": "fit",
-    "width": 800,
+    // "autosize": "pad",
+    "width": 1000,
     "height": 350,
 
     "data": [
@@ -47,7 +47,7 @@ const spec = {
     ],
 
     "axes": [
-        {"orient": "bottom", "scale": "x"},
+        {"orient": "bottom", "scale": "x", "labelColor": "#000000", "labelFontSize": 12},
         {"orient": "right", "scale": "y"}
     ],
 

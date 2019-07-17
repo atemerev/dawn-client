@@ -21,6 +21,7 @@ export class LoginForm extends React.Component {
     handleSubmit = (event) => {
         event.preventDefault()
         this.setState({submitted: true})
+        console.log(JSON.stringify(this.state))
         this.props.handleSubmit(this.state)
     }
 

@@ -16,15 +16,16 @@ export class Root extends React.Component {
         }
     }
 
-    handleSubmit = async (credentials) => {
-        this.setState({credentials: credentials})
-        await this.init()
+    handleSubmit = (credentials) => {
+        this.setState({credentials: credentials}, () => {
+            this.init().then(() => console.log("Client initialized"))
+        })
     }
 
     async init() {
         const conf = {
             throttleMs: 150,
-            trimOrders: 200,
+            trimOrders: 10,
             span: 95,
             timeAxisHeight: 30,
             symbol: "XBTUSD",
@@ -61,13 +62,13 @@ export class Root extends React.Component {
     render() {
         let header = null
         if (this.state.uiState === 'offline') {
-            header = <LoginForm handleSubmit={this.handleSubmit}/>
+            header = <LoginForm handleSubmit={this.handleSubmit.bind(this)}/> // todo bind incorrect, see why not working
         } else {
             // todo display statistics
             header = <span id={'connected'}>Connected!</span>
         }
 
-        let main = (this.state.uiState === 'online') ? <DepthChart data={this.state.chartData} renderer='canvas'/> : null
+        let main = (this.state.uiState === 'online') ? <DepthChart data={this.state.chartData} renderer='svg'/> : null
 
         return (
             <div id={'root'}>
@@ -75,7 +76,7 @@ export class Root extends React.Component {
                     <h1>BitMEX HF Visualizer</h1>
                     {header}
                 </header>
-                <main>
+                <main id={'chart'}>
                     {main}
                 </main>
                 <footer>
