@@ -3,9 +3,10 @@ import { AxisRight, AxisBottom } from '@vx/axis'
 import { withParentSize } from '@vx/responsive'
 import { Group } from '@vx/group'
 import { scaleLinear } from '@vx/scale'
-import {AreaClosed} from '@vx/shape'
+import {AreaClosed, LinePath} from '@vx/shape'
 import { curveStepBefore, curveStepAfter } from '@vx/curve'
 import { GridRows } from '@vx/grid'
+import {GlyphTriangle} from "@vx/glyph";
 
 const margin = {
     top: 10,
@@ -37,6 +38,17 @@ function UnboundDepthChart(props) {
 
     const x = (e) => xScale(e.price)
     const y = (e) => yScale(e.amount)
+
+    let glyphs = props.data.orders.map((o) => {
+        return (
+            <GlyphTriangle
+                left={xScale(o.price)}
+                top={yMax}
+                size={10}
+                fill={'green'}
+            />
+        )
+    })
 
     return (
         <svg width={props.parentWidth} height={props.parentHeight}>
@@ -71,6 +83,7 @@ function UnboundDepthChart(props) {
                     curve={curveStepAfter}
                 />
 
+                {glyphs}
             </Group>
         </svg>
     )
