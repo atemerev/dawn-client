@@ -48,7 +48,7 @@ const spec = {
 
     "axes": [
         {"orient": "bottom", "scale": "x", "labelColor": "#000000", "labelFontSize": 12},
-        {"orient": "right", "scale": "y"}
+        {"orient": "right", "scale": "y", "grid": true}
     ],
 
     "marks": [

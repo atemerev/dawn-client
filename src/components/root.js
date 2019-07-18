@@ -1,9 +1,9 @@
 import React from "react"
 import * as ReactDOM from "react-dom"
 import {Bitmex} from "../vendor/bitmex"
-import {DepthChart} from "./depthchart"
 import {LoginForm} from "./loginform"
 import * as _ from "lodash"
+import {DepthChart} from "./vxchart";
 
 export class Root extends React.Component {
     constructor(props) {
@@ -11,7 +11,9 @@ export class Root extends React.Component {
         this.bitmexClient = new Bitmex()
         this.state = {
             uiState: 'offline', // or online
-            chartData: {},
+            chartData: {
+                bids: [], offers: [], orders: []
+            },
             credentials: {}
         }
     }
@@ -25,7 +27,7 @@ export class Root extends React.Component {
     async init() {
         const conf = {
             throttleMs: 150,
-            trimOrders: 10,
+            trimOrders: 200,
             span: 95,
             timeAxisHeight: 30,
             symbol: "XBTUSD",
@@ -68,7 +70,7 @@ export class Root extends React.Component {
             header = <span id={'connected'}>Connected!</span>
         }
 
-        let main = (this.state.uiState === 'online') ? <DepthChart data={this.state.chartData} renderer='svg'/> : null
+        let main = (this.state.uiState === 'online') ? <DepthChart data={this.state.chartData}/> : null
 
         return (
             <div id={'root'}>
