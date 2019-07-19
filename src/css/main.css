@@ -11,13 +11,10 @@ body {
 }
 
 #chart {
-    margin-top: 5mm;
-    margin-bottom: 5mm;
-}
-
-svg {
     width: 100%;
     height: 350px;
+    margin-top: 5mm;
+    margin-bottom: 5mm;
 }
 
 h1 {

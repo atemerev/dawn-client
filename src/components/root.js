@@ -4,6 +4,7 @@ import {Bitmex} from "../vendor/bitmex"
 import {LoginForm} from "./loginform"
 import * as _ from "lodash"
 import {DepthChart} from "./vxchart";
+import {OrderBook} from "../lib/orderbook";
 
 export class Root extends React.Component {
     constructor(props) {
@@ -25,23 +26,16 @@ export class Root extends React.Component {
     }
 
     async init() {
-        const conf = {
-            throttleMs: 150,
-            trimOrders: 200,
-            span: 95,
-            timeAxisHeight: 30,
-            symbol: "XBTUSD",
-            amountAxisWidth: 55
-        }
         let lastTs = 0
         let chartData = {'bids': [], 'offers': [], 'orders': []}
         let eventListener = function (self, obj) {
             let table = obj.hasOwnProperty('table') ? obj.table : ''
             if (table.startsWith('orderBookL2')) {
                 let ts = (new Date()).getTime()
-                if (ts > lastTs + conf.throttleMs) {
+                if (ts > lastTs + this.props.conf.throttleMs) {
                     lastTs = ts
-                    let refBook = self.market['XBTUSD'].trim(conf.trimOrders)
+                    // let refBook = self.market['XBTUSD'].trim(conf.trimOrders)
+                    let refBook = trimPriceRange(self.market[this.props.conf.symbol], this.props.conf.span)
                     Object.assign(chartData, {'bids': refBook.bids, 'offers': refBook.offers})
                     let dataCopy = Object.assign({}, chartData)
                     this.setState({chartData: dataCopy})
@@ -64,13 +58,13 @@ export class Root extends React.Component {
     render() {
         let header = null
         if (this.state.uiState === 'offline') {
-            header = <LoginForm handleSubmit={this.handleSubmit.bind(this)}/> // todo bind incorrect, see why not working
+            header = <LoginForm handleSubmit={this.handleSubmit}/>
         } else {
             // todo display statistics
             header = <span id={'connected'}>Connected!</span>
         }
 
-        let main = (this.state.uiState === 'online') ? <DepthChart data={this.state.chartData}/> : null
+        let main = (this.state.uiState === 'online' && this.state.chartData.bids.length > 0) ? <DepthChart data={this.state.chartData} span={this.props.conf.span}/> : null
 
         return (
             <div id={'root'}>
@@ -87,4 +81,11 @@ export class Root extends React.Component {
             </div>
         )
     }
+}
+
+function trimPriceRange(orderBook, priceDelta) {
+    let avg = (orderBook.bids[0].price + orderBook.offers[0].price) / 2
+    let filteredBids = _.takeWhile(orderBook.bids, (e) => e.price > avg - priceDelta)
+    let filteredOffers = _.takeWhile(orderBook.offers, (e) => e.price < avg + priceDelta)
+    return new OrderBook(orderBook.symbol, filteredBids, filteredOffers)
 }

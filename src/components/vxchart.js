@@ -17,11 +17,10 @@ const margin = {
 
 function UnboundDepthChart(props) {
 
-    let bids = props.data.bids.map((e) => e.price)
-    let offers = props.data.offers.map((e) => e.price)
+    let avg = (props.data.bids[0].price + props.data.offers[0].price) / 2
 
-    let minPrice = Math.min(...bids)
-    let maxPrice = Math.max(...offers)
+    let minPrice = avg - props.span
+    let maxPrice = avg + props.span
 
     const xMax = props.parentWidth - margin.left - margin.right;
     const yMax = props.parentHeight - margin.top - margin.bottom;
