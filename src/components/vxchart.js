@@ -7,6 +7,7 @@ import {AreaClosed, LinePath} from '@vx/shape'
 import { curveStepBefore, curveStepAfter } from '@vx/curve'
 import { GridRows } from '@vx/grid'
 import {GlyphTriangle} from "@vx/glyph";
+import {Text} from "@vx/text";
 
 const margin = {
     top: 10,
@@ -40,12 +41,10 @@ function UnboundDepthChart(props) {
 
     let glyphs = props.data.orders.map((o) => {
         return (
-            <GlyphTriangle
-                left={xScale(o.price)}
-                top={yMax}
-                size={10}
-                fill={'green'}
-            />
+            <Group top={yMax + 5} left={xScale(o.price)} key={'' + o.price}>
+                <GlyphTriangle size={10} fill={'green'}/>
+                <Text fill={'green'} stroke={''} fontSize={12} y={-10} textAnchor={'middle'}>{o.leavesQty}</Text>
+            </Group>
         )
     })
 

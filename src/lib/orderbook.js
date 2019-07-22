@@ -6,7 +6,7 @@ export let OrderBook = function (symbol, bids, offers) {
     this.offers = offers ? offers : []
 }
 
-OrderBook.prototype.updateOrder = function (side, id, price, amount) {
+OrderBook.prototype.updateOrder = function(side, id, price, amount) {
     let line = side === 'bid' ? this.bids : this.offers
     let idxById = _.findIndex(line, (e) => e.id == id, 0)
     if (amount == 0) {
@@ -27,7 +27,7 @@ OrderBook.prototype.updateOrder = function (side, id, price, amount) {
 }
 
 
-OrderBook.prototype.insertOrder = function (side, id, price, amount) {
+OrderBook.prototype.insertOrder = function(side, id, price, amount) {
     let line = side === 'bid' ? this.bids : this.offers
     let order = {'side': side, 'id': id, 'price': price, 'amount': amount}
     let iteratee = side === 'bid' ? (e) => -e.price : (e) => e.price
@@ -35,7 +35,7 @@ OrderBook.prototype.insertOrder = function (side, id, price, amount) {
     line.splice(idx, 0, order)
 }
 
-OrderBook.prototype.deleteOrder = function (side, id) {
+OrderBook.prototype.deleteOrder = function(side, id) {
     let line = side === 'bid' ? this.bids : this.offers
     let idxById = _.findIndex(line, (e) => e.id == id, 0)
     if (idxById != -1) {
@@ -43,6 +43,10 @@ OrderBook.prototype.deleteOrder = function (side, id) {
     } else {
         console.log('Error: order (delete) not found. Id: ' + id + ', side: ' + side)
     }
+}
+
+OrderBook.prototype.isProper = function() {
+    return this.bids.length > 0 && this.offers.length > 0
 }
 
 OrderBook.prototype.trim = function (maxOrders) {

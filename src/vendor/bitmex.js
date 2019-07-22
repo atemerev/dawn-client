@@ -57,7 +57,7 @@ Bitmex.prototype.connect = function(apiKey, secret) {
     })
 }
 
-Bitmex.prototype._onMarketUpdate = function (obj) {
+Bitmex.prototype._onMarketUpdate = function(obj) {
     let data = obj.data
     let action = obj.action
     _.forEach(data, (e) => {
