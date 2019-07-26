@@ -1,7 +1,6 @@
 import React, {useEffect} from 'react'
 import useForm from './customhooks'
 
-
 function SpanSelector(props) {
 
     const {inputs, handleInputChange, handleSubmit} = useForm(props.initialState, props.callback)

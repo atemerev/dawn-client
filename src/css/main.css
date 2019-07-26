@@ -30,3 +30,8 @@ footer {
 form.loginForm > label {
     margin-right: 0.5em;
 }
+
+.toolTipLine {
+    color: black;
+    stroke: black;
+}

@@ -1,9 +1,9 @@
-import * as React from "react"
+import React, {useState} from 'react'
 import { AxisRight, AxisBottom } from '@vx/axis'
 import { withParentSize } from '@vx/responsive'
 import { Group } from '@vx/group'
 import { scaleLinear } from '@vx/scale'
-import {AreaClosed, LinePath} from '@vx/shape'
+import {AreaClosed, Line} from '@vx/shape'
 import { curveStepBefore, curveStepAfter } from '@vx/curve'
 import { GridRows } from '@vx/grid'
 import {GlyphTriangle} from "@vx/glyph";
@@ -17,6 +17,8 @@ const margin = {
 };
 
 function UnboundDepthChart(props) {
+
+    let [tooltipX, setTooltipX] = useState(-1)
 
     let avg = (props.data.bids[0].price + props.data.offers[0].price) / 2
 
@@ -48,8 +50,14 @@ function UnboundDepthChart(props) {
         )
     })
 
+    let handleMouseMove = (event) => {
+        let currentTargetRect = event.currentTarget.getBoundingClientRect()
+        let relX = event.pageX - currentTargetRect.left
+        setTooltipX(relX)
+    }
+
     return (
-        <svg width={props.parentWidth} height={props.parentHeight}>
+        <svg width={props.parentWidth} height={props.parentHeight} onMouseMove={handleMouseMove}>
             <Group top={margin.top} left={margin.left}>
 
                 <AxisBottom scale={xScale} top={yMax}/>
@@ -82,6 +90,9 @@ function UnboundDepthChart(props) {
                 />
 
                 {glyphs}
+            </Group>
+            <Group id={'tooltip'} top={margin.top} left={0}>
+                <Line from={{x: tooltipX, y: 0}} to={{x: tooltipX, y: yMax}} className={'toolTipLine'}/>
             </Group>
         </svg>
     )
