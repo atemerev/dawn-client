@@ -9,6 +9,7 @@ import {GridRows} from '@vx/grid'
 import {GlyphTriangle} from "@vx/glyph"
 import {Text} from "@vx/text"
 import moize from 'moize'
+import _ from "lodash"
 
 const margin = {
     top: 10,
@@ -16,6 +17,8 @@ const margin = {
     left: 50,
     right: 100,
 }
+
+let nowTs = new Date().getTime()
 
 const GroupMem = moize.reactSimple(Group)
 const AxisBottomMem = moize.reactSimple(AxisBottom)
@@ -26,6 +29,8 @@ const AreaClosedMem = moize.reactSimple(AreaClosed)
 function UnboundDepthChart(props) {
 
     let [tooltipX, setTooltipX] = useState(-1)
+    let [orders, setOrders] = useState({})
+    let [orderAmount, setOrderAmount] = useState(200)
 
     let avg = (props.data.bids[0].price + props.data.offers[0].price) / 2
 
@@ -63,11 +68,27 @@ function UnboundDepthChart(props) {
         setTooltipX(relX)
     }
 
+    let handleClick = (event) => {
+        let x = tooltipX - margin.left
+        if (x > 0 && x < xMax) {
+            nowTs++
+            let id = 'mx' + nowTs
+            let price = xScale.invert(x)
+            let side = price < avg ? 'buy' : 'sell'
+            let pendingOrder = {'id': id, 'side': side, 'price': price, 'amount': orderAmount, 'time': new Date().getTime()}
+            let pendingEntry = {}
+            pendingEntry[id] = pendingOrder
+            let newPendingOrders = _.assign({}, orders, pendingEntry)
+            console.log(JSON.stringify(newPendingOrders))
+            setOrders(newPendingOrders)
+        }
+    }
+
     let showTooltip = tooltipX > margin.left && tooltipX < props.parentWidth - margin.right
 
     return (
         <React.Fragment>
-            <svg width={props.parentWidth} height={props.parentHeight} onMouseMove={handleMouseMove}>
+            <svg width={props.parentWidth} height={props.parentHeight} onMouseMove={handleMouseMove} onClick={handleClick}>
                 <GroupMem top={margin.top} left={margin.left}>
 
                     <AxisBottomMem scale={xScale} top={yMax}/>
