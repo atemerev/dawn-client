@@ -1,20 +1,27 @@
 import React, {useState} from 'react'
-import { AxisRight, AxisBottom } from '@vx/axis'
-import { withParentSize } from '@vx/responsive'
-import { Group } from '@vx/group'
-import { scaleLinear } from '@vx/scale'
+import {AxisRight, AxisBottom} from '@vx/axis'
+import {withParentSize} from '@vx/responsive'
+import {Group} from '@vx/group'
+import {scaleLinear} from '@vx/scale'
 import {AreaClosed, Line} from '@vx/shape'
-import { curveStepBefore, curveStepAfter } from '@vx/curve'
-import { GridRows } from '@vx/grid'
-import {GlyphTriangle} from "@vx/glyph";
-import {Text} from "@vx/text";
+import {curveStepBefore, curveStepAfter} from '@vx/curve'
+import {GridRows} from '@vx/grid'
+import {GlyphTriangle} from "@vx/glyph"
+import {Text} from "@vx/text"
+import moize from 'moize'
 
 const margin = {
     top: 10,
     bottom: 50,
     left: 50,
     right: 100,
-};
+}
+
+const GroupMem = moize.reactSimple(Group)
+const AxisBottomMem = moize.reactSimple(AxisBottom)
+const AxisRightMem = moize.reactSimple(AxisRight)
+const GridRowsMem = moize.reactSimple(GridRows)
+const AreaClosedMem = moize.reactSimple(AreaClosed)
 
 function UnboundDepthChart(props) {
 
@@ -43,10 +50,10 @@ function UnboundDepthChart(props) {
 
     let glyphs = props.data.orders.map((o) => {
         return (
-            <Group top={yMax + 5} left={xScale(o.price)} key={'' + o.price}>
+            <GroupMem top={yMax + 5} left={xScale(o.price)} key={'' + o.price}>
                 <GlyphTriangle size={10} fill={'green'}/>
                 <Text fill={'green'} stroke={''} fontSize={12} y={-10} textAnchor={'middle'}>{o.leavesQty}</Text>
-            </Group>
+            </GroupMem>
         )
     })
 
@@ -56,45 +63,51 @@ function UnboundDepthChart(props) {
         setTooltipX(relX)
     }
 
+    let showTooltip = tooltipX > margin.left && tooltipX < props.parentWidth - margin.right
+
     return (
-        <svg width={props.parentWidth} height={props.parentHeight} onMouseMove={handleMouseMove}>
-            <Group top={margin.top} left={margin.left}>
+        <React.Fragment>
+            <svg width={props.parentWidth} height={props.parentHeight} onMouseMove={handleMouseMove}>
+                <GroupMem top={margin.top} left={margin.left}>
 
-                <AxisBottom scale={xScale} top={yMax}/>
-                <AxisRight scale={yScale} left={xMax} grid={true}/>
+                    <AxisBottomMem scale={xScale} top={yMax}/>
+                    <AxisRightMem scale={yScale} left={xMax} grid={true}/>
 
-                <GridRows scale={yScale} width={xMax} height={yMax}/>
+                    <GridRowsMem scale={yScale} width={xMax} height={yMax}/>
 
-                <AreaClosed
-                    data={props.data.bids}
-                    yScale={yScale}
-                    x={x}
-                    y={y}
-                    y0={0}
-                    stroke={''}
-                    strokeWidth={0}
-                    fill={'#aec7e8'}
-                    curve={curveStepBefore}
-                />
+                    <AreaClosedMem
+                        data={props.data.bids}
+                        yScale={yScale}
+                        x={x}
+                        y={y}
+                        y0={0}
+                        stroke={''}
+                        strokeWidth={0}
+                        fill={'#aec7e8'}
+                        curve={curveStepBefore}
+                    />
 
-                <AreaClosed
-                    data={props.data.offers}
-                    yScale={yScale}
-                    x={x}
-                    y={y}
-                    y0={0}
-                    stroke={''}
-                    strokeWidth={0}
-                    fill={'#ffbb78'}
-                    curve={curveStepAfter}
-                />
+                    <AreaClosedMem
+                        data={props.data.offers}
+                        yScale={yScale}
+                        x={x}
+                        y={y}
+                        y0={0}
+                        stroke={''}
+                        strokeWidth={0}
+                        fill={'#ffbb78'}
+                        curve={curveStepAfter}
+                    />
 
-                {glyphs}
-            </Group>
-            <Group id={'tooltip'} top={margin.top} left={0}>
-                <Line from={{x: tooltipX, y: 0}} to={{x: tooltipX, y: yMax}} className={'toolTipLine'}/>
-            </Group>
-        </svg>
+                    {glyphs}
+                </GroupMem>
+
+                {showTooltip &&
+                <Group id={'tooltip'} top={margin.top} left={0}>
+                    <Line from={{x: tooltipX, y: 0}} to={{x: tooltipX, y: yMax}} className={'toolTipLine'}/>
+                </Group>}
+            </svg>
+        </React.Fragment>
     )
 }
 
