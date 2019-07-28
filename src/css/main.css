@@ -15,6 +15,7 @@ body {
     height: 350px;
     margin-top: 5mm;
     margin-bottom: 5mm;
+    border: 1px solid lightgray;
 }
 
 h1 {
@@ -32,6 +33,7 @@ form.loginForm > label {
 }
 
 .toolTipLine {
-    color: black;
-    stroke: black;
+    stroke-width: 2px;
+    stroke: lightgreen;
+    stroke-dasharray: 3px;
 }

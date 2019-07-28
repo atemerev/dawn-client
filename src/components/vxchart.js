@@ -12,7 +12,7 @@ import moize from 'moize'
 import _ from "lodash"
 
 const margin = {
-    top: 10,
+    top: 20,
     bottom: 50,
     left: 50,
     right: 100,
@@ -47,7 +47,8 @@ function UnboundDepthChart(props) {
 
     let yScale = scaleLinear({
         range: [yMax, 0],
-        domain: [0, 1000000]
+        domain: [0, 1000000],
+        clamp: true
     })
 
     const x = (e) => xScale(e.price)
@@ -68,14 +69,17 @@ function UnboundDepthChart(props) {
         setTooltipX(relX)
     }
 
+    let showTooltip = tooltipX > margin.left && tooltipX < props.parentWidth - margin.right
+    let entryX = tooltipX - margin.left
+    let entryPrice = roundUpTo(xScale.invert(entryX), 0.5)
+    let entryPriceText = (Math.round(entryPrice) === entryPrice) ? entryPrice + '.0' : entryPrice + ''
+
     let handleClick = (event) => {
-        let x = tooltipX - margin.left
-        if (x > 0 && x < xMax) {
+        if (entryX > 0 && entryX < xMax) {
             nowTs++
             let id = 'mx' + nowTs
-            let price = xScale.invert(x)
-            let side = price < avg ? 'buy' : 'sell'
-            let pendingOrder = {'id': id, 'side': side, 'price': price, 'amount': orderAmount, 'time': new Date().getTime()}
+            let side = entryPrice < avg ? 'buy' : 'sell'
+            let pendingOrder = {'id': id, 'side': side, 'price': entryPrice, 'amount': orderAmount, 'time': new Date().getTime()}
             let pendingEntry = {}
             pendingEntry[id] = pendingOrder
             let newPendingOrders = _.assign({}, orders, pendingEntry)
@@ -83,8 +87,6 @@ function UnboundDepthChart(props) {
             setOrders(newPendingOrders)
         }
     }
-
-    let showTooltip = tooltipX > margin.left && tooltipX < props.parentWidth - margin.right
 
     return (
         <React.Fragment>
@@ -126,10 +128,16 @@ function UnboundDepthChart(props) {
                 {showTooltip &&
                 <Group id={'tooltip'} top={margin.top} left={0}>
                     <Line from={{x: tooltipX, y: 0}} to={{x: tooltipX, y: yMax}} className={'toolTipLine'}/>
+                    <Text fill={'green'} stroke={''} fontSize={8} x={tooltipX} y={yMax + 12} textAnchor={'middle'}>{entryPriceText}</Text>
+                    <GlyphTriangle top={yMax} left={tooltipX} size={20} fill={'green'}/>
                 </Group>}
             </svg>
         </React.Fragment>
     )
+}
+
+let roundUpTo = function(value, step) {
+    return Math.round(value / step) * step
 }
 
 export let DepthChart = withParentSize(UnboundDepthChart)
