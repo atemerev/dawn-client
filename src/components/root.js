@@ -53,7 +53,6 @@ export class Root extends React.Component {
             }
         }.bind(this)
         this.bitmexClient = new Bitmex(eventListener)
-        // let ws = await this.bitmexClient.connect('VRljkeAiXH80mRndOA0TuBfY', 'sgJWLHhtOiIGXYJaeEhtLLMLFiH_aSawmI7lwLswHSsm_r1M')
         let ws = await this.bitmexClient.connect(this.state.credentials.bitmexApiKey, this.state.credentials.bitmexSecret)
         this.setState({uiState: 'online'})
         this.bitmexClient.subscribe(ws, ['orderBookL2:XBTUSD', 'trade:XBTUSD', 'order', 'position'])

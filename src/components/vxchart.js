@@ -67,6 +67,8 @@ function UnboundDepthChart(props) {
     let handleMouseMove = (event) => {
         let currentTargetRect = event.currentTarget.getBoundingClientRect()
         let relX = event.pageX - currentTargetRect.left
+        let relPrice = roundUpTo(xScale.invert(relX), 0.5)
+        relX = xScale(relPrice) // discrete tooltip locations
         setTooltipX(relX)
     }
 
