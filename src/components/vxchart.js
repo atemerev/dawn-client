@@ -3,7 +3,8 @@ import {AxisRight, AxisBottom} from '@vx/axis'
 import {withParentSize} from '@vx/responsive'
 import {Group} from '@vx/group'
 import {scaleLinear} from '@vx/scale'
-import {AreaClosed, Line} from '@vx/shape'
+import {AreaClosed, Line, Area} from '@vx/shape'
+import { GradientOrangeRed, GradientTealBlue } from '@vx/gradient'
 import {curveStepBefore, curveStepAfter} from '@vx/curve'
 import {GridRows} from '@vx/grid'
 import {GlyphTriangle} from "@vx/glyph"
@@ -91,12 +92,16 @@ function UnboundDepthChart(props) {
     return (
         <React.Fragment>
             <svg width={props.parentWidth} height={props.parentHeight} onMouseMove={handleMouseMove} onClick={handleClick}>
+
+                <GradientOrangeRed id="gradient-asks"/>
+                <GradientTealBlue id="gradient-bids"/>
+
                 <GroupMem top={margin.top} left={margin.left}>
 
-                    <AxisBottomMem scale={xScale} top={yMax}/>
-                    <AxisRightMem scale={yScale} left={xMax} grid={true}/>
+                    <AxisBottomMem scale={xScale} top={yMax} axisClassName={'book-axis'}/>
+                    <AxisRightMem scale={yScale} left={xMax} grid={true} axisClassName={'book-axis'}/>
 
-                    <GridRowsMem scale={yScale} width={xMax} height={yMax}/>
+                    <GridRowsMem scale={yScale} width={xMax} height={yMax} className={'book-grid'}/>
 
                     <AreaClosedMem
                         data={props.data.bids}
@@ -104,10 +109,11 @@ function UnboundDepthChart(props) {
                         x={x}
                         y={y}
                         y0={0}
-                        stroke={''}
+                        stroke={'#8ba1b9'}
                         strokeWidth={0}
-                        fill={'#aec7e8'}
-                        curve={curveStepBefore}
+                        fill={"url('#gradient-bids')"}
+                        curve={curveStepAfter}
+                        opacity={0.5}
                     />
 
                     <AreaClosedMem
@@ -116,10 +122,11 @@ function UnboundDepthChart(props) {
                         x={x}
                         y={y}
                         y0={0}
-                        stroke={''}
+                        stroke={'#FDE0CC'}
                         strokeWidth={0}
-                        fill={'#ffbb78'}
+                        fill={"url('#gradient-asks')"}
                         curve={curveStepAfter}
+                        opacity={0.5}
                     />
 
                     {glyphs}
@@ -128,8 +135,8 @@ function UnboundDepthChart(props) {
                 {showTooltip &&
                 <Group id={'tooltip'} top={margin.top} left={0}>
                     <Line from={{x: tooltipX, y: 0}} to={{x: tooltipX, y: yMax}} className={'toolTipLine'}/>
-                    <Text fill={'green'} stroke={''} fontSize={8} x={tooltipX} y={yMax + 12} textAnchor={'middle'}>{entryPriceText}</Text>
-                    <GlyphTriangle top={yMax} left={tooltipX} size={20} fill={'green'}/>
+                    <Text fill={'lightgreen'} stroke={''} fontSize={10} x={tooltipX} y={yMax + 12} textAnchor={'middle'}>{entryPriceText}</Text>
+                    <GlyphTriangle top={yMax} left={tooltipX} size={25} fill={'lightgreen'}/>
                 </Group>}
             </svg>
         </React.Fragment>

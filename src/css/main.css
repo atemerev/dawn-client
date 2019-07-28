@@ -6,8 +6,17 @@
 }
 
 body {
+    background-color: #06030E;
+    color: #6CCCC1;
     font-family: "Open Sans Light", sans-serif;
     margin: 10mm 10mm 10mm 10mm;
+}
+
+input, select {
+    background-color: #06030E;
+    color: #6CCCC1;
+    appearance: none;
+    border: 1px solid #6CCCC1;
 }
 
 #chart {
@@ -15,7 +24,7 @@ body {
     height: 350px;
     margin-top: 5mm;
     margin-bottom: 5mm;
-    border: 1px solid lightgray;
+    border: 2px solid #182e4b;
 }
 
 h1 {
@@ -36,4 +45,12 @@ form.loginForm > label {
     stroke-width: 2px;
     stroke: lightgreen;
     stroke-dasharray: 3px;
+}
+
+.book-axis {
+    stroke: #153b31;
+}
+
+.book-grid line {
+    stroke: #153b31;
 }

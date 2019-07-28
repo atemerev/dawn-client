@@ -15,6 +15,7 @@
     "@vx/bounds": "^0.0.189",
     "@vx/curve": "^0.0.189",
     "@vx/glyph": "^0.0.190",
+    "@vx/gradient": "^0.0.189",
     "@vx/grid": "^0.0.190",
     "@vx/group": "^0.0.189",
     "@vx/responsive": "^0.0.189",
