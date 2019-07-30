@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { Fragment, useState } from 'react';
 import { AxisRight, AxisBottom } from '@vx/axis';
 import { withParentSize } from '@vx/responsive';
 import { Group } from '@vx/group';
@@ -10,7 +10,8 @@ import { GridRows } from '@vx/grid';
 import { GlyphTriangle } from '@vx/glyph';
 import { Text } from '@vx/text';
 import moize from 'moize';
-import _ from 'lodash';
+
+import cn from './styles.css';
 
 const margin = {
   top: 20,
@@ -31,6 +32,7 @@ const roundUpTo = function(value, step) {
   return Math.round(value / step) * step;
 };
 
+/* eslint-disable */
 function OrderLine(props) {
   <GroupMem top={yMax + 5} left={xScale(o.price)} key={`${o.price}`}>
     <GlyphTriangle size={10} fill="green" />
@@ -45,7 +47,7 @@ function PendingOrders(props) {
 
   const bidLines = book.bids.map(e => {
     return (
-      <React.Fragment>
+      <Fragment>
         <Line
           from={{ x: tooltipX, y: 0 }}
           to={{ x: tooltipX, y: yMax }}
@@ -63,15 +65,17 @@ function PendingOrders(props) {
         </Text>
         <GlyphTriangle top={yMax} left={tooltipX} size={25} fill="lightgreen" />
         />
-      </React.Fragment>
+      </Fragment>
     );
   });
 }
+/* eslint-enable */
 
 function UnboundDepthChart(props) {
   const [tooltipX, setTooltipX] = useState(-1);
-  const [orders, setOrders] = useState({});
   const [orderAmount] = useState(200);
+
+  console.log(props.data)
 
   const avg = (props.data.bids[0].price + props.data.offers[0].price) / 2;
 
@@ -136,18 +140,15 @@ function UnboundDepthChart(props) {
         amount: orderAmount,
         time: new Date().getTime(),
       };
-      const pendingEntry = {};
 
-      pendingEntry[id] = pendingOrder;
-      const newPendingOrders = _.assign({}, orders, pendingEntry);
+      console.log(JSON.stringify(pendingOrder));
 
-      console.log(JSON.stringify(newPendingOrders));
-      setOrders(newPendingOrders);
+      props.onOrderAdd(pendingOrder);
     }
   };
 
   return (
-    <React.Fragment>
+    <Fragment>
       <svg
         width={props.parentWidth}
         height={props.parentHeight}
@@ -158,19 +159,23 @@ function UnboundDepthChart(props) {
         <GradientTealBlue id="gradient-bids" />
 
         <GroupMem top={margin.top} left={margin.left}>
-          <AxisBottomMem scale={xScale} top={yMax} axisClassName="book-axis" />
+          <AxisBottomMem
+            scale={xScale}
+            top={yMax}
+            axisClassName={cn.bookAxis}
+          />
           <AxisRightMem
             scale={yScale}
             left={xMax}
             grid
-            axisClassName="book-axis"
+            axisClassName={cn.bookAxis}
           />
 
           <GridRowsMem
             scale={yScale}
             width={xMax}
             height={yMax}
-            className="book-grid"
+            className={cn.bookGrid}
           />
 
           <AreaClosedMem
@@ -207,7 +212,7 @@ function UnboundDepthChart(props) {
             <Line
               from={{ x: tooltipX, y: 0 }}
               to={{ x: tooltipX, y: yMax }}
-              className="toolTipLine"
+              className={cn.toolTipLine}
             />
             <Text
               fill="lightgreen"
@@ -228,8 +233,8 @@ function UnboundDepthChart(props) {
           </Group>
         )}
       </svg>
-    </React.Fragment>
+    </Fragment>
   );
 }
 
-export const DepthChart = withParentSize(UnboundDepthChart);
+export default withParentSize(UnboundDepthChart);

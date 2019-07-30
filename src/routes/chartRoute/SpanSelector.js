@@ -1,21 +1,20 @@
-import React, { useEffect } from 'react';
-import useForm from './customhooks';
+import React, { memo } from 'react';
+import { useForm } from './customHooks';
 
-function SpanSelector(props) {
-  const { inputs, handleInputChange, handleSubmit } = useForm(
-    props.initialState,
-    props.callback,
-  );
+const FIELD_NAME = 'chooseSpan';
 
-  useEffect(() => {
-    handleSubmit();
+export default memo(({ value, onSubmit, onChange }) => {
+  const { inputs, handleInputChange } = useForm({
+    initialState: { [FIELD_NAME]: value },
+    onSubmit,
+    onChange: value => onChange({ span: parseInt(value, 10) }),
   });
 
   return (
     <label>
       Display width, USD:&nbsp;
       <select
-        name="chooseSpan"
+        name={FIELD_NAME}
         value={inputs.chooseSpan}
         onChange={handleInputChange}
       >
@@ -37,6 +36,4 @@ function SpanSelector(props) {
       </select>
     </label>
   );
-}
-
-export default SpanSelector;
+});

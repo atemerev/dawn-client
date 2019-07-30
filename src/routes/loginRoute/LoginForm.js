@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { Component } from 'react';
 
-export class LoginForm extends React.Component {
+import cn from './styles.css';
+
+export default class LoginForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -27,7 +29,7 @@ export class LoginForm extends React.Component {
 
   render() {
     return (
-      <form onSubmit={this.handleSubmit} className="loginForm">
+      <form onSubmit={this.handleSubmit} className={cn.loginForm}>
         <label>
           Bitmex API key:&nbsp;
           <input
