@@ -1,26 +1,30 @@
 import { useState } from 'react';
 
-const useForm = (initialState, callback) => {
+export const useForm = ({ initialState, onSubmit, onChange }) => {
   const [inputs, setInputs] = useState(initialState);
 
   const handleSubmit = event => {
     if (event) {
       event.preventDefault();
     }
-    callback(inputs);
+
+    onSubmit(inputs);
   };
 
   const handleInputChange = event => {
     if (event) {
       event.persist();
-      setInputs(inputs => ({
+
+      const newInputs = {
         ...inputs,
         [event.target.name]: event.target.value,
-      }));
+      };
+
+      setInputs(newInputs);
+
+      onChange(event.target.value, newInputs);
     }
   };
 
   return { handleSubmit, handleInputChange, inputs };
 };
-
-export default useForm;

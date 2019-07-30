@@ -1,13 +1,13 @@
 import * as ReactDOM from 'react-dom';
 import * as React from 'react';
-import { Root } from './components/root';
+import App from './components/App';
 
 const conf = {
-  throttleMs: 100,
-  span: 75,
+  throttleMs: 3000,
+  span: 50,
   symbol: 'XBTUSD',
 };
 
-const domContainer = document.querySelector('#main');
+const domContainer = document.getElementById('app');
 
-ReactDOM.render(<Root conf={conf} />, domContainer);
+ReactDOM.render(<App conf={conf} />, domContainer);

@@ -1,0 +1,25 @@
+.chart {
+  width: 100%;
+  height: 350px;
+  margin-top: 5mm;
+  margin-bottom: 5mm;
+  border: 2px solid #182e4b;
+}
+
+.toolTipLine {
+  stroke-width: 2px;
+  stroke: lightgreen;
+  stroke-dasharray: 3px;
+}
+
+.bookAxis {
+  stroke: #153b31;
+}
+
+.bookGrid line {
+  stroke: #153b31;
+}
+
+.topBarWrapper {
+  padding-bottom: 10px;
+}
