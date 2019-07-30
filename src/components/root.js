@@ -49,7 +49,6 @@ export class Root extends React.Component {
                 }
             } else if (table === 'order') {
                 root.updateOrders(orderBook, chartData, self)
-                console.log(JSON.stringify(obj))
             }
         }.bind(this)
         this.bitmexClient = new Bitmex(eventListener)
@@ -76,12 +75,12 @@ export class Root extends React.Component {
             // todo display statistics
 
             header = <SpanSelector initialState={{chooseSpan: 50}} callback={(inputs) => {
-                console.log(JSON.stringify(inputs))
                 this.setState({'span': parseInt(inputs.chooseSpan)})
             }}/>
         }
 
-        let main = (this.state.uiState === 'online' && this.state.chartData.bids.length > 0) ? <DepthChart data={this.state.chartData} span={this.state.span}/> : null
+        let placeholder = (this.state.uiState === 'online' && this.state.chartData.bids.length === 0) ? <span className={'loading'}>Subscribing...</span> : null
+        let main = (this.state.uiState === 'online' && this.state.chartData.bids.length > 0) ? <DepthChart data={this.state.chartData} span={this.state.span}/> : placeholder
 
         return (
             <div id={'root'}>

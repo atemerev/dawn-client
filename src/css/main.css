@@ -12,11 +12,15 @@ body {
     margin: 10mm 10mm 10mm 10mm;
 }
 
+/*
 input, select {
     background-color: #06030E;
     color: #6CCCC1;
-    appearance: none;
     border: 1px solid #6CCCC1;
+}
+*/
+
+select {
 }
 
 #chart {

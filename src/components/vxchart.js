@@ -11,6 +11,7 @@ import {GlyphTriangle} from "@vx/glyph"
 import {Text} from "@vx/text"
 import moize from 'moize'
 import _ from "lodash"
+import {OrderBook} from "../lib/orderbook";
 
 const margin = {
     top: 20,
@@ -27,10 +28,30 @@ const AxisRightMem = moize.reactSimple(AxisRight)
 const GridRowsMem = moize.reactSimple(GridRows)
 const AreaClosedMem = moize.reactSimple(AreaClosed)
 
+function OrderLine(props) {
+    <GroupMem top={yMax + 5} left={xScale(o.price)} key={'' + o.price}>
+        <GlyphTriangle size={10} fill={'green'}/>
+        <Text fill={'green'} stroke={''} fontSize={12} y={-10} textAnchor={'middle'}>{o.leavesQty}</Text>
+    </GroupMem>
+}
+
+function PendingOrders(props) {
+    let book = props.orderBook
+    let bidLines = book.bids.map(e => {
+        return (
+            <React.Fragment>
+                <Line from={{x: tooltipX, y: 0}} to={{x: tooltipX, y: yMax}} className={'toolTipLine'}/>
+                <Text fill={'lightgreen'} stroke={''} fontSize={10} x={tooltipX} y={yMax + 12} textAnchor={'middle'}>{entryPriceText}</Text>
+                <GlyphTriangle top={yMax} left={tooltipX} size={25} fill={'lightgreen'}/>
+            </React.Fragment>
+        )
+    })
+}
+
 function UnboundDepthChart(props) {
 
     let [tooltipX, setTooltipX] = useState(-1)
-    let [orders, setOrders] = useState({})
+    let [pendingOrders, setPendingOrders] = useState(new OrderBook('XBTUSD'))
     let [orderAmount, setOrderAmount] = useState(200)
 
     let avg = (props.data.bids[0].price + props.data.offers[0].price) / 2
@@ -82,12 +103,9 @@ function UnboundDepthChart(props) {
             nowTs++
             let id = 'mx' + nowTs
             let side = entryPrice < avg ? 'buy' : 'sell'
-            let pendingOrder = {'id': id, 'side': side, 'price': entryPrice, 'amount': orderAmount, 'time': new Date().getTime()}
-            let pendingEntry = {}
-            pendingEntry[id] = pendingOrder
-            let newPendingOrders = _.assign({}, orders, pendingEntry)
-            console.log(JSON.stringify(newPendingOrders))
-            setOrders(newPendingOrders)
+            pendingOrders.insertOrder(side, id, entryPrice, orderAmount)
+            setPendingOrders(pendingOrders)
+            console.log(JSON.stringify(pendingOrders))
         }
     }
 
