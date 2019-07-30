@@ -55,7 +55,6 @@ export class Root extends React.Component {
     });
   };
 
-
   async init() {
     let lastTs = 0;
     const chartData = { bids: [], offers: [], orders: [] };

@@ -32,23 +32,40 @@ const roundUpTo = function(value, step) {
 };
 
 function OrderLine(props) {
-    <GroupMem top={yMax + 5} left={xScale(o.price)} key={'' + o.price}>
-        <GlyphTriangle size={10} fill={'green'}/>
-        <Text fill={'green'} stroke={''} fontSize={12} y={-10} textAnchor={'middle'}>{o.leavesQty}</Text>
-    </GroupMem>
+  <GroupMem top={yMax + 5} left={xScale(o.price)} key={`${o.price}`}>
+    <GlyphTriangle size={10} fill="green" />
+    <Text fill="green" stroke="" fontSize={12} y={-10} textAnchor="middle">
+      {o.leavesQty}
+    </Text>
+  </GroupMem>;
 }
 
 function PendingOrders(props) {
-    let book = props.orderBook;
-    let bidLines = book.bids.map(e => {
-        return (
-            <React.Fragment>
-                <Line from={{x: tooltipX, y: 0}} to={{x: tooltipX, y: yMax}} className={'toolTipLine'}/>
-                <Text fill={'lightgreen'} stroke={''} fontSize={10} x={tooltipX} y={yMax + 12} textAnchor={'middle'}>{entryPriceText}</Text>
-                <GlyphTriangle top={yMax} left={tooltipX} size={25} fill={'lightgreen'}/>
-            </React.Fragment>
-        )
-    });
+  const book = props.orderBook;
+
+  const bidLines = book.bids.map(e => {
+    return (
+      <React.Fragment>
+        <Line
+          from={{ x: tooltipX, y: 0 }}
+          to={{ x: tooltipX, y: yMax }}
+          className="toolTipLine"
+        />
+        <Text
+          fill="lightgreen"
+          stroke=""
+          fontSize={10}
+          x={tooltipX}
+          y={yMax + 12}
+          textAnchor="middle"
+        >
+          {entryPriceText}
+        </Text>
+        <GlyphTriangle top={yMax} left={tooltipX} size={25} fill="lightgreen" />
+        />
+      </React.Fragment>
+    );
+  });
 }
 
 function UnboundDepthChart(props) {
