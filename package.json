@@ -16,7 +16,7 @@
     }
   },
   "lint-staged": {
-    "*.{js,json,jsx}": [
+    "*.js": [
       "yarn lint-fix"
     ]
   },
