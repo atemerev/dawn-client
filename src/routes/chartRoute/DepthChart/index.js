@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useState, memo } from 'react';
 import { AxisRight, AxisBottom } from '@vx/axis';
 import { withParentSize } from '@vx/responsive';
 import { Group } from '@vx/group';
@@ -32,16 +32,16 @@ const roundUpTo = function(value, step) {
   return Math.round(value / step) * step;
 };
 
-/* eslint-disable */
-function OrderLine(props) {
-  <GroupMem top={yMax + 5} left={xScale(o.price)} key={`${o.price}`}>
-    <GlyphTriangle size={10} fill="green" />
-    <Text fill="green" stroke="" fontSize={12} y={-10} textAnchor="middle">
-      {o.leavesQty}
+const OrderLine = memo(({ top, left, price }) => (
+  <Group top={top} left={left}>
+    <GlyphTriangle size={10} fill="green" top={-30} />
+    <Text fill="green" stroke="" fontSize={12} textAnchor="middle">
+      {price}
     </Text>
-  </GroupMem>;
-}
+  </Group>
+));
 
+/* eslint-disable */
 function PendingOrders(props) {
   const book = props.orderBook;
 
@@ -77,7 +77,7 @@ function UnboundDepthChart({
   parentHeight,
   parentWidth,
   span,
-  // orders,
+  orders,
 }) {
   const [tooltipX, setTooltipX] = useState(-1);
   const [orderAmount] = useState(200);
@@ -152,6 +152,13 @@ function UnboundDepthChart({
     }
   };
 
+  const pricePositions = orders.map(({ id, price }) => ({
+    id,
+    price,
+    left: xScale(price) + margin.left,
+    top: margin.top + yMax + 35,
+  }));
+
   return (
     <Fragment>
       <svg
@@ -162,7 +169,6 @@ function UnboundDepthChart({
       >
         <GradientOrangeRed id="gradient-asks" />
         <GradientTealBlue id="gradient-bids" />
-
         <GroupMem top={margin.top} left={margin.left}>
           <AxisBottomMem
             scale={xScale}
@@ -211,7 +217,6 @@ function UnboundDepthChart({
 
           {glyphs}
         </GroupMem>
-
         {showTooltip && (
           <Group id="tooltip" top={margin.top} left={0}>
             <Line
@@ -237,6 +242,9 @@ function UnboundDepthChart({
             />
           </Group>
         )}
+        {pricePositions.map(({ id, ...rest }, index) => (
+          <OrderLine key={`${id} ${index}`} {...rest} />
+        ))}
       </svg>
     </Fragment>
   );

@@ -1,0 +1,13 @@
+.toolTipLine {
+  stroke-width: 2px;
+  stroke: lightgreen;
+  stroke-dasharray: 3px;
+}
+
+.bookAxis {
+  stroke: #153b31;
+}
+
+.bookGrid line {
+  stroke: #153b31;
+}
