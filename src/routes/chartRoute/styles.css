@@ -1,8 +1,6 @@
 .chart {
   width: 100%;
   height: 350px;
-  margin-top: 5mm;
-  margin-bottom: 5mm;
   border: 2px solid #182e4b;
 }
 
@@ -21,5 +19,11 @@
 }
 
 .topBarWrapper {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.ordersBarWrapper {
+  padding-top: 10px;
   padding-bottom: 10px;
 }

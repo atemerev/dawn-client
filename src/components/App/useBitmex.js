@@ -30,25 +30,29 @@ function trimOrders(orderBook, myOrders, priceDelta) {
   );
 }
 
-export default ({ getSpan }) => {
-  const [, setBitmex] = useState(null);
+export default ({ conf }) => {
+  const [bitmexClient, setBitmex] = useState(null);
+  const [span, setSpan] = useState(conf.span);
   const [chartData, setChartData] = useState({
     bids: [],
     offers: [],
     orders: [],
   });
 
-  const initBitmex = async ({ credentials, conf }) => {
-    const span = getSpan();
+  if (bitmexClient) {
+    bitmexClient.span = span;
+  }
 
+  const initBitmex = async ({ credentials, conf }) => {
     let lastTs = 0;
 
     const eventListener = (self, obj) => {
       const updateOrders = (orderBook, chartData) => {
+        console.log('update orders');
         const myOrders = self.tables.order;
 
         if (orderBook && orderBook.isProper()) {
-          const trimmed = trimOrders(orderBook, myOrders, span);
+          const trimmed = trimOrders(orderBook, myOrders, bitmexClient.span); // eslint-disable-line
 
           setChartData({
             ...chartData,
@@ -67,15 +71,13 @@ export default ({ getSpan }) => {
         if (ts > lastTs + conf.throttleMs) {
           lastTs = ts;
           // let refBook = self.market['XBTUSD'].trim(conf.trimOrders)
-          const refBook = trimPriceRange(orderBook, span);
+          const refBook = trimPriceRange(orderBook, bitmexClient.span); // eslint-disable-line
 
-          Object.assign(chartData, {
+          setChartData({
+            ...chartData,
             bids: refBook.bids,
             offers: refBook.offers,
           });
-          const dataCopy = Object.assign({}, chartData);
-
-          setChartData(dataCopy);
         }
         if (obj.action === 'partial') {
           updateOrders(orderBook, chartData);
@@ -101,10 +103,12 @@ export default ({ getSpan }) => {
       'position',
     ]);
 
+    bitmexClient.span = span;
+
     setBitmex(bitmexClient);
   };
 
   const destroyBitmex = () => console.log('somehow destroy bitmex');
 
-  return { initBitmex, chartData, destroyBitmex };
+  return { initBitmex, chartData, destroyBitmex, span, setSpan };
 };
