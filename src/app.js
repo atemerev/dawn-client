@@ -3,7 +3,7 @@ import * as React from 'react';
 import App from './components/App';
 
 const conf = {
-  throttleMs: 3000,
+  throttleMs: 100,
   span: 50,
   symbol: 'XBTUSD',
 };

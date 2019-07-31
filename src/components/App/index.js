@@ -5,9 +5,8 @@ import useBitmex from './useBitmex';
 
 export default ({ conf }) => {
   const [uiState, setUiState] = useState('offline' /* or online */);
-  const [span, setSpan] = useState(conf.span);
   const [orders, setOrders] = useState([]);
-  const { initBitmex, chartData } = useBitmex({ getSpan: () => span });
+  const { initBitmex, chartData, span, setSpan } = useBitmex({ conf });
 
   const onLoginFormSubmit = async credentials => {
     await initBitmex({ credentials, conf });

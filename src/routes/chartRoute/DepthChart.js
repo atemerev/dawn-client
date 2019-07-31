@@ -71,19 +71,24 @@ function PendingOrders(props) {
 }
 /* eslint-enable */
 
-function UnboundDepthChart(props) {
+function UnboundDepthChart({
+  data,
+  onOrderAdd,
+  parentHeight,
+  parentWidth,
+  span,
+  // orders,
+}) {
   const [tooltipX, setTooltipX] = useState(-1);
   const [orderAmount] = useState(200);
 
-  console.log(props.data)
+  const avg = (data.bids[0].price + data.offers[0].price) / 2;
 
-  const avg = (props.data.bids[0].price + props.data.offers[0].price) / 2;
+  const minPrice = avg - span;
+  const maxPrice = avg + span;
 
-  const minPrice = avg - props.span;
-  const maxPrice = avg + props.span;
-
-  const xMax = props.parentWidth - margin.left - margin.right;
-  const yMax = props.parentHeight - margin.top - margin.bottom;
+  const xMax = parentWidth - margin.left - margin.right;
+  const yMax = parentHeight - margin.top - margin.bottom;
 
   const xScale = scaleLinear({
     range: [0, xMax],
@@ -99,7 +104,7 @@ function UnboundDepthChart(props) {
   const x = e => xScale(e.price);
   const y = e => yScale(e.amount);
 
-  const glyphs = props.data.orders.map(o => {
+  const glyphs = data.orders.map(o => {
     return (
       <GroupMem top={yMax + 5} left={xScale(o.price)} key={`${o.price}`}>
         <GlyphTriangle size={10} fill="green" />
@@ -121,7 +126,7 @@ function UnboundDepthChart(props) {
   };
 
   const showTooltip =
-    tooltipX > margin.left && tooltipX < props.parentWidth - margin.right;
+    tooltipX > margin.left && tooltipX < parentWidth - margin.right;
   const entryX = tooltipX - margin.left;
   const entryPrice = roundUpTo(xScale.invert(entryX), 0.5);
   const entryPriceText =
@@ -143,15 +148,15 @@ function UnboundDepthChart(props) {
 
       console.log(JSON.stringify(pendingOrder));
 
-      props.onOrderAdd(pendingOrder);
+      onOrderAdd(pendingOrder);
     }
   };
 
   return (
     <Fragment>
       <svg
-        width={props.parentWidth}
-        height={props.parentHeight}
+        width={parentWidth}
+        height={parentHeight}
         onMouseMove={handleMouseMove}
         onClick={handleClick}
       >
@@ -179,7 +184,7 @@ function UnboundDepthChart(props) {
           />
 
           <AreaClosedMem
-            data={props.data.bids}
+            data={data.bids}
             yScale={yScale}
             x={x}
             y={y}
@@ -192,7 +197,7 @@ function UnboundDepthChart(props) {
           />
 
           <AreaClosedMem
-            data={props.data.offers}
+            data={data.offers}
             yScale={yScale}
             x={x}
             y={y}
