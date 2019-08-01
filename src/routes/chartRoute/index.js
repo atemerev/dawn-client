@@ -22,7 +22,7 @@ const Content = ({
     <Fragment>
       <InfoBar />
       <Row>
-        <Col xs={2}>
+        <Col xs={4}>
           <div className="padding-y">
             <SpanSelector value={span} onChange={onSpanChange} />
           </div>

@@ -1,5 +1,6 @@
 import React, { memo } from 'react';
 import Select from 'react-select';
+import { Form } from 'react-bootstrap';
 import { find } from 'lodash/fp';
 
 import cn from './styles.css';
@@ -13,13 +14,15 @@ const options = [
 ];
 
 export default memo(({ value, onChange }) => (
-  <div className={cn.root}>
-    <Select
+  <Form.Group controlId="formSpanSelector" className={cn.root}>
+    <Form.Label className={cn.label}>Display width, USD:</Form.Label>
+    <Form.Control
+      as={Select}
       classNamePrefix="react-select"
       clearable={false}
       value={find({ value }, options)}
       onChange={({ value }) => onChange(parseInt(value, 10))}
       options={options}
     />
-  </div>
+  </Form.Group>
 ));
