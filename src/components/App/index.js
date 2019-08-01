@@ -16,7 +16,7 @@ export default ({ conf }) => {
     console.log('Client initialized');
   };
 
-  const onSpanChange = useCallback(({ span }) => setSpan(span), []);
+  const onSpanChange = useCallback(setSpan, []);
 
   const onCancellAllClick = useCallback(
     () => console.log('onCancellAllClick'),
