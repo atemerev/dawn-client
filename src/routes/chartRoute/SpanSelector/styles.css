@@ -1,0 +1,15 @@
+.root :global(.react-select__single-value) {
+  color: inherit;
+}
+
+.root :global(.react-select__control) {
+  background-color: transparent;
+}
+
+.root :global(.react-select__menu) {
+  color: #000;
+}
+
+.root :global(.react-select__option--is-selected) {
+  background-color: #375a7f;
+}

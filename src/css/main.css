@@ -1,35 +1,16 @@
-@import "bootstrap/dist/css/bootstrap.css";
+@import "bootswatch/dist/darkly/bootstrap.min.css";
 
-@font-face {
-    font-family: 'Open Sans Light';
-    font-style: normal;
-    font-weight: 200;
-    src: local('Open Sans Light'), url(../vendor/OpenSans-Light.ttf) format('truetype');
+:global(.padding) {
+  padding: 10px;
 }
 
-body {
-    background-color: #06030E;
-    color: #6CCCC1;
-    font-family: "Open Sans Light", sans-serif;
-    margin: 10mm 10mm 10mm 10mm;
+:global(.padding-x) {
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
-
-input, select {
-    background-color: #06030E;
-    color: #6CCCC1;
-    border: 1px solid #6CCCC1;
+:global(.padding-y) {
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
-select {
-}
-
-h1 {
-    font-size: 17pt;
-    font-weight: 200;
-}
-
-footer {
-    margin-top: 1em;
-    font-size: 10pt;
-}

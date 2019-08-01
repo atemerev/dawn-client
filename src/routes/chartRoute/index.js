@@ -9,21 +9,25 @@ import InfoBar from './InfoBar';
 
 import cn from './styles.css';
 
-const Header = ({ onChange, span }) => (
-  <SpanSelector value={span} onChange={onChange} />
-);
-
 const Content = ({
   chartData,
   onCancelButtonClick,
   onCancellAllClick,
   onOrderAdd,
+  onSpanChange,
   orders,
   span,
 }) =>
   chartData.bids.length > 0 ? (
     <Fragment>
       <InfoBar />
+      <Row>
+        <Col xs={2}>
+          <div className="padding-y">
+            <SpanSelector value={span} onChange={onSpanChange} />
+          </div>
+        </Col>
+      </Row>
       <Row>
         <Col xs={8}>
           <div className={cn.chart}>
@@ -60,12 +64,12 @@ export default ({
   orders,
   span,
 }) => ({
-  headerNode: <Header onChange={onSpanChange} span={span} />,
   contentNode: (
     <Content
       chartData={chartData}
       onCancelButtonClick={onCancelButtonClick}
       onCancellAllClick={onCancellAllClick}
+      onSpanChange={onSpanChange}
       onOrderAdd={onOrderAdd}
       orders={orders}
       span={span}

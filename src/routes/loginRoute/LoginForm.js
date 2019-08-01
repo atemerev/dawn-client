@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-
-import cn from './styles.css';
+import { Form, Button } from 'react-bootstrap';
 
 export default class LoginForm extends Component {
   constructor(props) {
@@ -29,25 +28,36 @@ export default class LoginForm extends Component {
 
   render() {
     return (
-      <form onSubmit={this.handleSubmit} className={cn.loginForm}>
-        <label>
-          Bitmex API key:&nbsp;
-          <input
+      <Form onSubmit={this.handleSubmit}>
+        <Form.Group controlId="formApiKey">
+          <Form.Label>Bitmex API key:</Form.Label>
+          <Form.Control
+            placeholder="Bitmex API key"
             type="text"
             value={this.state.bitmexApiKey}
             onChange={this.handleKeyChange}
           />
-        </label>
-        <label>
-          API secret:&nbsp;
-          <input
+        </Form.Group>
+
+        <Form.Group controlId="formApiSecret">
+          <Form.Label>API secret:</Form.Label>
+          <Form.Control
             type="password"
+            placeholder="API secret"
             value={this.state.bitmexSecret}
             onChange={this.handleSecretChange}
           />
-        </label>
-        <input type="submit" value="Connect" disabled={this.state.submitted} />
-      </form>
+        </Form.Group>
+        <div className="text-right">
+          <Button
+            variant="primary"
+            type="submit"
+            disabled={this.state.submitted}
+          >
+            Connect
+          </Button>
+        </div>
+      </Form>
     );
   }
 }
