@@ -1,7 +1,7 @@
 .chart {
   width: 100%;
   height: 350px;
-  border: 2px solid #182e4b;
+  border: 1px solid #444;
 }
 
 .topBarWrapper {

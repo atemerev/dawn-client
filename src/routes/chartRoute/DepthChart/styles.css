@@ -5,9 +5,13 @@
 }
 
 .bookAxis {
-  stroke: #153b31;
+  stroke: #009670;
+}
+
+.bookAxis :global(.vx-line) {
+  stroke: #444;
 }
 
 .bookGrid line {
-  stroke: #153b31;
+  stroke: #272727;
 }

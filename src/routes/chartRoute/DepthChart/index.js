@@ -16,8 +16,8 @@ import cn from './styles.css';
 const margin = {
   top: 20,
   bottom: 50,
-  left: 50,
-  right: 100,
+  left: 20,
+  right: 70,
 };
 
 let nowTs = new Date().getTime();
