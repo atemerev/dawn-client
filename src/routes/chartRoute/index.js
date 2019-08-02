@@ -15,13 +15,14 @@ const Content = ({
   onCancellAllClick,
   onOrderAdd,
   onSpanChange,
+  orderBook,
   orders,
   span,
   trades,
 }) =>
   chartData.bids.length > 0 ? (
     <Fragment>
-      <InfoBar trades={trades} />
+      <InfoBar trades={trades} orderBook={orderBook} />
       <Row>
         <Col xs={4}>
           <div className="padding-y">

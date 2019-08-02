@@ -6,7 +6,9 @@ import useBitmex from './useBitmex';
 export default ({ conf }) => {
   const [uiState, setUiState] = useState('offline' /* or online */);
   const [orders, setOrders] = useState([]);
-  const { initBitmex, chartData, span, setSpan, trades } = useBitmex({ conf });
+  const { orderBook, initBitmex, chartData, span, setSpan, trades } = useBitmex(
+    { conf },
+  );
 
   const onLoginFormSubmit = async credentials => {
     await initBitmex({ credentials, conf });
@@ -40,6 +42,7 @@ export default ({ conf }) => {
     onLoginFormSubmit,
     onOrderAdd,
     onSpanChange,
+    orderBook,
     orders,
     span,
     trades,
