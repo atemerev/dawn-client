@@ -17,10 +17,11 @@ const Content = ({
   onSpanChange,
   orders,
   span,
+  trades,
 }) =>
   chartData.bids.length > 0 ? (
     <Fragment>
-      <InfoBar />
+      <InfoBar trades={trades} />
       <Row>
         <Col xs={4}>
           <div className="padding-y">
@@ -49,30 +50,12 @@ const Content = ({
           </div>
         </Col>
         <Col xs={4}>
-          <OrdersHistoryTable />
+          <OrdersHistoryTable trades={trades} />
         </Col>
       </Row>
     </Fragment>
   ) : null;
 
-export default ({
-  chartData,
-  onCancelButtonClick,
-  onCancellAllClick,
-  onOrderAdd,
-  onSpanChange,
-  orders,
-  span,
-}) => ({
-  contentNode: (
-    <Content
-      chartData={chartData}
-      onCancelButtonClick={onCancelButtonClick}
-      onCancellAllClick={onCancellAllClick}
-      onSpanChange={onSpanChange}
-      onOrderAdd={onOrderAdd}
-      orders={orders}
-      span={span}
-    />
-  ),
+export default props => ({
+  contentNode: <Content {...props} />,
 });

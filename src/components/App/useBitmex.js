@@ -1,17 +1,17 @@
-import { useState } from 'react';
-import * as _ from 'lodash';
+import { useState, useReducer } from 'react';
+import { takeRight, filter, takeWhile } from 'lodash/fp';
 import { Bitmex } from '../../vendor/bitmex';
 import { OrderBook } from '../../lib/orderbook';
 
 function trimPriceRange(orderBook, priceDelta) {
   const avg = (orderBook.bids[0].price + orderBook.offers[0].price) / 2;
-  const filteredBids = _.takeWhile(
-    orderBook.bids,
+  const filteredBids = takeWhile(
     e => e.price > avg - priceDelta,
+    orderBook.bids,
   );
-  const filteredOffers = _.takeWhile(
-    orderBook.offers,
+  const filteredOffers = takeWhile(
     e => e.price < avg + priceDelta,
+    orderBook.offers,
   );
 
   return new OrderBook(orderBook.symbol, filteredBids, filteredOffers);
@@ -20,15 +20,35 @@ function trimPriceRange(orderBook, priceDelta) {
 function trimOrders(orderBook, myOrders, priceDelta) {
   const avg = (orderBook.bids[0].price + orderBook.offers[0].price) / 2;
 
-  return _.filter(
-    myOrders,
+  return filter(
     o =>
       o.price > avg - priceDelta &&
       o.price < avg + priceDelta &&
       o.leavesQty &&
       o.leavesQty > 0,
+    myOrders,
   );
 }
+
+const MAX_TRADES_LENGTH = 50;
+
+const reducer = (state, { table, action, data }) => {
+  switch (table) {
+    case 'trade': {
+      if (action === 'insert' || action === 'partial') {
+        let { trades } = state;
+
+        trades = takeRight(MAX_TRADES_LENGTH, [...trades, ...data]);
+
+        state = { ...state, trades };
+      }
+    }
+  }
+
+  return state;
+};
+
+const initialState = { trades: [] };
 
 export default ({ conf }) => {
   const [bitmexClient, setBitmex] = useState(null);
@@ -38,6 +58,8 @@ export default ({ conf }) => {
     offers: [],
     orders: [],
   });
+
+  const [{ trades }, dispatch] = useReducer(reducer, initialState);
 
   if (bitmexClient) {
     bitmexClient.span = span;
@@ -86,6 +108,8 @@ export default ({ conf }) => {
         updateOrders(orderBook, chartData);
 
         console.log(JSON.stringify(obj));
+      } else if (obj) {
+        dispatch(obj);
       }
     };
 
@@ -110,5 +134,5 @@ export default ({ conf }) => {
 
   const destroyBitmex = () => console.log('somehow destroy bitmex');
 
-  return { initBitmex, chartData, destroyBitmex, span, setSpan };
+  return { initBitmex, chartData, destroyBitmex, span, setSpan, trades };
 };
