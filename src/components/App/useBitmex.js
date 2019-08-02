@@ -52,6 +52,7 @@ const initialState = { trades: [] };
 
 export default ({ conf }) => {
   const [bitmexClient, setBitmex] = useState(null);
+  const [orderBook, setOrderBook] = useState(null);
   const [span, setSpan] = useState(conf.span);
   const [chartData, setChartData] = useState({
     bids: [],
@@ -69,12 +70,12 @@ export default ({ conf }) => {
     let lastTs = 0;
 
     const eventListener = (self, obj) => {
-      const updateOrders = (orderBook, chartData) => {
+      const updateOrders = (_orderBook, chartData) => {
         console.log('update orders');
         const myOrders = self.tables.order;
 
-        if (orderBook && orderBook.isProper()) {
-          const trimmed = trimOrders(orderBook, myOrders, bitmexClient.span); // eslint-disable-line
+        if (_orderBook && _orderBook.isProper()) {
+          const trimmed = trimOrders(_orderBook, myOrders, bitmexClient.span); // eslint-disable-line
 
           setChartData({
             ...chartData,
@@ -85,7 +86,9 @@ export default ({ conf }) => {
 
       const table = obj.hasOwnProperty('table') ? obj.table : ''; // eslint-disable-line
 
-      const orderBook = self.market[conf.symbol];
+      const _orderBook = self.market[conf.symbol];
+
+      setOrderBook(_orderBook);
 
       if (table.startsWith('orderBookL2')) {
         const ts = new Date().getTime();
@@ -93,7 +96,7 @@ export default ({ conf }) => {
         if (ts > lastTs + conf.throttleMs) {
           lastTs = ts;
           // let refBook = self.market['XBTUSD'].trim(conf.trimOrders)
-          const refBook = trimPriceRange(orderBook, bitmexClient.span); // eslint-disable-line
+          const refBook = trimPriceRange(_orderBook, bitmexClient.span); // eslint-disable-line
 
           setChartData({
             ...chartData,
@@ -102,10 +105,10 @@ export default ({ conf }) => {
           });
         }
         if (obj.action === 'partial') {
-          updateOrders(orderBook, chartData);
+          updateOrders(_orderBook, chartData);
         }
       } else if (table === 'order') {
-        updateOrders(orderBook, chartData);
+        updateOrders(_orderBook, chartData);
 
         console.log(JSON.stringify(obj));
       } else if (obj) {
@@ -125,6 +128,7 @@ export default ({ conf }) => {
       'trade:XBTUSD',
       'order',
       'position',
+      'account',
     ]);
 
     bitmexClient.span = span;
@@ -134,5 +138,13 @@ export default ({ conf }) => {
 
   const destroyBitmex = () => console.log('somehow destroy bitmex');
 
-  return { initBitmex, chartData, destroyBitmex, span, setSpan, trades };
+  return {
+    chartData,
+    destroyBitmex,
+    initBitmex,
+    orderBook,
+    setSpan,
+    span,
+    trades,
+  };
 };

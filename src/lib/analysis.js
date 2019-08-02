@@ -19,7 +19,9 @@ function _hirsch(current, max, blockSize, line) {
 }
 
 export function hirschVolumes(orderBook, trimSize, blockSize) {
-  const trimmed = orderBook.trim(trimSize);
+  return [[1,2,3], [4,5,6,7,8]]; // eslint-disable-line
+
+  const trimmed = orderBook.trim(trimSize); // eslint-disable-line
 
   const bidH = _hirsch(0, 0, blockSize, trimmed.bids);
 

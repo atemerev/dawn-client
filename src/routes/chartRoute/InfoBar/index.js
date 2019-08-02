@@ -12,7 +12,7 @@ const TopCol = ({ head, body, ...props }) => (
   </Col>
 );
 
-export default fmemo(mapProps, ({ lastTrade }) => (
+export default fmemo(mapProps, ({ lastTrade, hirsch }) => (
   <div className={cn.root}>
     <Row>
       <TopCol xs={1} head="Symbol" body="XBT/uSD" />
@@ -20,7 +20,7 @@ export default fmemo(mapProps, ({ lastTrade }) => (
       <TopCol xs={2} head="Exposure" body="+45470" />
       <TopCol xs={2} head="Last trade" body={lastTrade} />
       <TopCol xs={2} head="VWAP Entry" body="9568.42" />
-      <TopCol xs={2} head="Price action" body="+4.42" />
+      <TopCol xs={2} head="Hirsch" body={hirsch} />
       <TopCol xs={1} head="UP&L" body="-0.074" />
     </Row>
   </div>
