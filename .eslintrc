@@ -15,6 +15,7 @@
   "rules": {
     "css-modules/no-undef-class": 0,
     "css-modules/no-unused-class": 0,
+    "default-case": 0,
     "func-names": 0,
     "import/prefer-default-export": 0,
     "jsx-a11y/label-has-associated-control": 0,
@@ -24,6 +25,7 @@
     "no-console": 0,
     "no-shadow": 0,
     "no-underscore-dangle": 0,
+    "no-param-reassign": 0,
     "prettier/prettier": [
       "error",
       {

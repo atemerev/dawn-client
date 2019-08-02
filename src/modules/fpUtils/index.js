@@ -1,4 +1,6 @@
 import { createStructuredSelector, defaultMemoize } from 'reselect';
+import { flow } from 'lodash/fp';
+import { memo } from 'react';
 
 export const struct = createStructuredSelector;
 
@@ -11,3 +13,5 @@ export const mapProps = getters =>
       ...newProps,
     };
   });
+
+export const fmemo = (...fns) => memo(flow(...fns));

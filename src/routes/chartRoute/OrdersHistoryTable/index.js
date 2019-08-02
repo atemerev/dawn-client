@@ -1,10 +1,12 @@
-import React, { memo } from 'react';
+import React from 'react';
 import { Table } from 'react-bootstrap';
+import { fmemo } from '../../../modules/fpUtils';
+import mapProps from './mapProps';
 
 import cn from './styles.css';
 
-export default memo(() => (
-  <Table striped bordered hover className={cn.root}>
+export default fmemo(mapProps, ({ sortedTrades }) => (
+  <Table striped bordered hover className={cn.root} size="sm">
     <thead>
       <tr>
         <th>Time</th>
@@ -14,12 +16,19 @@ export default memo(() => (
       </tr>
     </thead>
     <tbody>
-      <tr>
-        <td>01:03:05.472</td>
-        <td>BUY</td>
-        <td>9563.5</td>
-        <td>500</td>
-      </tr>
+      {sortedTrades.map(
+        (
+          { formattedDate, formattedSide, price, amount, trdMatchID },
+          index,
+        ) => (
+          <tr key={`${trdMatchID} ${index}`}>
+            <td>{formattedDate}</td>
+            <td>{formattedSide}</td>
+            <td>{price}</td>
+            <td>{amount}</td>
+          </tr>
+        ),
+      )}
     </tbody>
   </Table>
 ));
