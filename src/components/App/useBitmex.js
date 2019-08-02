@@ -88,7 +88,11 @@ export default ({ conf }) => {
 
       const _orderBook = self.market[conf.symbol];
 
-      setOrderBook(_orderBook);
+      if (_orderBook) {
+        setOrderBook(
+          new OrderBook(_orderBook.symbol, _orderBook.bids, _orderBook.offers),
+        );
+      }
 
       if (table.startsWith('orderBookL2')) {
         const ts = new Date().getTime();

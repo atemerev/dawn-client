@@ -17,11 +17,8 @@ export default fmemo(mapProps, ({ sortedTrades }) => (
     </thead>
     <tbody>
       {sortedTrades.map(
-        (
-          { formattedDate, formattedSide, price, amount, trdMatchID },
-          index,
-        ) => (
-          <tr key={`${trdMatchID} ${index}`}>
+        ({ formattedDate, formattedSide, price, amount }, index) => (
+          <tr key={index}>
             <td>{formattedDate}</td>
             <td>{formattedSide}</td>
             <td>{price}</td>
