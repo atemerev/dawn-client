@@ -10,11 +10,12 @@ function _hirsch(current, max, blockSize, line) {
 
   if (firstN.every(e => e.amount >= testSize)) {
     const newMax = Math.max(max, current + 1);
+
     return _hirsch(current + 1, newMax, blockSize, line);
-  } else {
-    const rest = _.drop(line, current + 1);
-    return _hirsch(0, max, blockSize, rest);
   }
+  const rest = _.drop(line, current + 1);
+
+  return _hirsch(0, max, blockSize, rest);
 }
 
 export function hirschVolumes(orderBook, trimSize, blockSize) {
