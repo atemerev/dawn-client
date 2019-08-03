@@ -17,11 +17,8 @@ const getHirsch = createSelector(
   get(['orderBook']),
   flow(
     orderBook => hirschVolumes(orderBook, 25, 50000),
-    ([arr1, arr2]) => {
-      const left = Math.max(...arr1);
-      const right = Math.max(...arr2);
-
-      return `${left}/${right}`;
+    ([hirschBid, hirshOffer]) => {
+      return `${hirschBid}/${hirshOffer}`;
     },
   ),
 );
