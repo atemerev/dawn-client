@@ -1,4 +1,4 @@
-import { get, map, flow, toUpper, reverse } from 'lodash/fp';
+import { get, map, flow, toUpper } from 'lodash/fp';
 import { format as formatDate } from 'date-fns/fp';
 import { createSelector } from 'reselect';
 import { struct, mapProps } from '../../../modules/fpUtils';
@@ -29,7 +29,6 @@ const getSortedTrades = createSelector(
         trdMatchID: get(['trdMatchID']),
       }),
     ),
-    reverse,
   ),
 );
 

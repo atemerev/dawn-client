@@ -6,8 +6,8 @@ export default class LoginForm extends Component {
     super(props);
     this.state = {
       submitted: false,
-      bitmexApiKey: '',
-      bitmexSecret: '',
+      bitmexApiKey: 'P3skizzyDTWyiQMzGldEYYbm',
+      bitmexSecret: 'FYso9EMhJVG4vC6OPv_LT0pMP4bWp63YZ2UOwZzsgh02mgYX',
     };
   }
 

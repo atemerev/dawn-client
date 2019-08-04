@@ -1,51 +1,22 @@
-import React, { Fragment, useCallback, useState } from 'react';
+import React, { Fragment, useState } from 'react';
 import Layout from '../Layout';
 import { matchRoute } from '../../routes';
-import useBitmex from './useBitmex';
+import { useBitmex } from '../../modules/bitmex';
 
-export default ({ conf }) => {
+export default () => {
   const [uiState, setUiState] = useState('offline' /* or online */);
-  const [orders, setOrders] = useState([]);
-  const { orderBook, initBitmex, chartData, span, setSpan, trades } = useBitmex(
-    { conf },
-  );
+  const { startDataFetching } = useBitmex();
 
   const onLoginFormSubmit = async credentials => {
-    await initBitmex({ credentials, conf });
+    await startDataFetching(credentials);
 
     setUiState('online');
 
     console.log('Client initialized');
   };
 
-  const onSpanChange = useCallback(setSpan, []);
-
-  const onCancellAllClick = useCallback(
-    () => console.log('onCancellAllClick'),
-    [],
-  );
-
-  const onOrderAdd = useCallback(order => setOrders([...orders, order]), [
-    orders,
-  ]);
-
-  const onCancelButtonClick = useCallback(
-    () => console.log('onCancelButtonClick'),
-    [],
-  );
-
   const layoutProps = matchRoute({
-    chartData,
-    conf,
-    onCancelButtonClick,
-    onCancellAllClick,
     onLoginFormSubmit,
-    onOrderAdd,
-    onSpanChange,
-    orderBook,
-    orders,
-    span,
-    trades,
     uiState,
   });
 
