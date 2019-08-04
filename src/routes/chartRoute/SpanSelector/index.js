@@ -2,6 +2,8 @@ import React, { memo } from 'react';
 import Select from 'react-select';
 import { Form } from 'react-bootstrap';
 import { find } from 'lodash/fp';
+import { useBitmex } from '../../../modules/bitmex';
+import bitmexSelector from './bitmexSelector';
 
 import cn from './styles.css';
 
@@ -13,16 +15,23 @@ const options = [
   { value: 1000, label: '1000' },
 ];
 
-export default memo(({ value, onChange }) => (
-  <Form.Group controlId="formSpanSelector" className={cn.root}>
-    <Form.Label className={cn.label}>Display width, USD:</Form.Label>
-    <Form.Control
-      as={Select}
-      classNamePrefix="react-select"
-      clearable={false}
-      value={find({ value }, options)}
-      onChange={({ value }) => onChange(parseInt(value, 10))}
-      options={options}
-    />
-  </Form.Group>
-));
+export default memo(() => {
+  const {
+    state: { span: value },
+    updateParams,
+  } = useBitmex(bitmexSelector);
+
+  return (
+    <Form.Group controlId="formSpanSelector" className={cn.root}>
+      <Form.Label className={cn.label}>Display width, USD:</Form.Label>
+      <Form.Control
+        as={Select}
+        classNamePrefix="react-select"
+        clearable={false}
+        value={find({ value }, options)}
+        onChange={({ value }) => updateParams({ span: parseInt(value, 10) })}
+        options={options}
+      />
+    </Form.Group>
+  );
+});

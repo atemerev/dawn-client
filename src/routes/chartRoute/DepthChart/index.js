@@ -10,6 +10,8 @@ import { GridRows } from '@vx/grid';
 import { GlyphTriangle } from '@vx/glyph';
 import { Text } from '@vx/text';
 import moize from 'moize';
+import { useBitmex } from '../../../modules/bitmex';
+import bitmexSelector from './bitmexSelector';
 
 import cn from './styles.css';
 
@@ -71,16 +73,18 @@ function PendingOrders(props) {
 }
 /* eslint-enable */
 
-function UnboundDepthChart({
-  data,
-  onOrderAdd,
-  parentHeight,
-  parentWidth,
-  span,
-  orders,
-}) {
+function UnboundDepthChart({ parentHeight, parentWidth }) {
+  const {
+    state: { data, span, myOrders },
+    addMyOrder,
+  } = useBitmex(bitmexSelector);
+
   const [tooltipX, setTooltipX] = useState(-1);
   const [orderAmount] = useState(200);
+
+  if (!data.bids.length) {
+    return null;
+  }
 
   const avg = (data.bids[0].price + data.offers[0].price) / 2;
 
@@ -148,11 +152,11 @@ function UnboundDepthChart({
 
       console.log(JSON.stringify(pendingOrder));
 
-      onOrderAdd(pendingOrder);
+      addMyOrder(pendingOrder);
     }
   };
 
-  const pricePositions = orders.map(({ id, price }) => ({
+  const pricePositions = myOrders.map(({ id, price }) => ({
     id,
     price,
     left: xScale(price) + margin.left,
