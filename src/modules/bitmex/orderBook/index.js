@@ -1,5 +1,4 @@
-import { take, drop } from 'lodash/fp';
-import _ from 'lodash';
+import { take, drop, sortedIndexBy, findIndexFrom } from 'lodash/fp';
 
 export const createOrderBook = ({ symbol, bids = [], offers = [] }) => {
   if (!symbol) {
@@ -39,7 +38,7 @@ export const insertOrder = function(state, { side, id, price, amount }) {
 
   const iteratee = side === 'bid' ? e => -e.price : e => e.price;
 
-  const idx = _.sortedIndexBy(line, order, iteratee);
+  const idx = sortedIndexBy(iteratee, order, line);
 
   line.splice(idx, 0, order);
 
@@ -53,7 +52,7 @@ export const deleteOrder = (state, { side, id }) => {
   const key = side === 'bid' ? 'bids' : 'offers';
   const line = [...state[key]];
 
-  const idxById = _.findIndex(line, e => e.id === id, 0);
+  const idxById = findIndexFrom(e => e.id === id, 0, line);
 
   if (idxById !== -1) {
     line.splice(idxById, 1);
@@ -77,7 +76,7 @@ export const updateOrder = (state, { side, id, price, amount }) => {
 
   const line = [...state[key]];
 
-  const idxById = _.findIndex(line, e => e.id === id, 0);
+  const idxById = findIndexFrom(e => e.id === id, 0, line);
 
   if (idxById !== -1) {
     // order found, updating
