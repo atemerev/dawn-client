@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { Row, Col } from 'react-bootstrap';
-import { useBitmex } from '../../../modules/bitmex';
-import bitmexSelector from './bitmexSelector';
+import { useSelector } from 'react-redux';
+import propsSelector from './propsSelector';
 
 import cn from './styles.css';
 
@@ -13,9 +13,7 @@ const TopCol = ({ head, body, ...props }) => (
 );
 
 export default memo(() => {
-  const {
-    state: { lastTrade, hirsch },
-  } = useBitmex(bitmexSelector);
+  const { lastTrade, hirsch } = useSelector(propsSelector);
 
   return (
     <div className={cn.root}>

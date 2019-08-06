@@ -1,14 +1,12 @@
 import React, { memo } from 'react';
 import { Table } from 'react-bootstrap';
-import { useBitmex } from '../../../modules/bitmex';
-import bitmexSelector from './bitmexSelector';
+import { useSelector } from 'react-redux';
+import propsSelector from './propsSelector';
 
 import cn from './styles.css';
 
 export default memo(() => {
-  const {
-    state: { sortedTrades },
-  } = useBitmex(bitmexSelector);
+  const { sortedTrades } = useSelector(propsSelector);
 
   return (
     <Table striped bordered hover className={cn.root} size="sm">

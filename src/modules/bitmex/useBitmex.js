@@ -1,40 +1,47 @@
-import { useState, useContext, useEffect } from 'react';
-import { noop } from 'lodash/fp';
-import shallowequal from 'shallowequal';
-import { BitmexContext } from './BitmexProvider';
+import { useRef } from 'react';
+import { useDispatch } from 'react-redux';
+import connectBitmex from './connectBitmex';
+import updateBitmexState from './updateBitmexState';
+import { setBitmex, resetBitmex } from './duck';
 
-export default (stateSelector = noop) => {
-  const bitmexClient = useContext(BitmexContext);
+const throttleMs = 1000;
 
-  const [state, setState] = useState(
-    stateSelector(bitmexClient.getState(), bitmexClient.getParams()),
-  );
-
-  useEffect(() =>
-    bitmexClient.addListener((bitmexState, bitmexParams) => {
-      const newState = stateSelector(bitmexState, bitmexParams);
-
-      if (!shallowequal(state, newState)) {
-        setState(newState);
-      }
-    }),
-  );
+export default () => {
+  const dispatch = useDispatch();
+  const bitmexCloseRef = useRef();
 
   const startDataFetching = async ({ bitmexApiKey, bitmexSecret }) => {
-    const ws = await bitmexClient.connect(bitmexApiKey, bitmexSecret);
+    let bitmexState = updateBitmexState();
 
-    bitmexClient.subscribe(ws, [
-      'orderBookL2:XBTUSD',
-      'trade:XBTUSD',
-      'order',
-      'position',
-      'account',
-    ]);
+    let lastTs = 0;
+
+    const onMessage = data => {
+      bitmexState = updateBitmexState(bitmexState, data);
+
+      const ts = Date.now();
+
+      if (ts > lastTs + throttleMs) {
+        lastTs = ts;
+
+        dispatch(setBitmex(bitmexState));
+      }
+    };
+
+    const onClose = () => {
+      dispatch(resetBitmex());
+
+      bitmexCloseRef.current = null;
+    };
+
+    bitmexCloseRef.current = connectBitmex({
+      apiKey: bitmexApiKey,
+      secret: bitmexSecret,
+      onMessage,
+      onClose,
+    });
   };
 
-  const updateParams = (...args) => bitmexClient.updateParams(...args);
-  const addMyOrder = (...args) => bitmexClient.addMyOrder(...args);
-  const cancelMyOrder = (...args) => bitmexClient.cancelMyOrder(...args);
+  const stopDataFetching = () => bitmexCloseRef.current();
 
-  return { state, startDataFetching, updateParams, addMyOrder, cancelMyOrder };
+  return { startDataFetching, stopDataFetching };
 };

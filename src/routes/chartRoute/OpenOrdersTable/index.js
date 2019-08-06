@@ -1,15 +1,14 @@
 import React, { memo } from 'react';
 import { Table, Button } from 'react-bootstrap';
-import { useBitmex } from '../../../modules/bitmex';
-import bitmexSelector from './bitmexSelector';
+import { useSelector, useDispatch } from 'react-redux';
+import { cancelMyOrder } from '../duck';
+import propsSelector from './propsSelector';
 
 import cn from './styles.css';
 
 export default memo(() => {
-  const {
-    state: { myOrders },
-    cancelMyOrder,
-  } = useBitmex(bitmexSelector);
+  const { myOrders } = useSelector(propsSelector);
+  const dispatch = useDispatch();
 
   return (
     <Table striped bordered hover className={cn.root}>
@@ -45,7 +44,9 @@ export default memo(() => {
               <td>{amount}</td>
               <td>{filled}</td>
               <td>
-                <Button onClick={() => cancelMyOrder(order.id)}>Cancel</Button>
+                <Button onClick={() => dispatch(cancelMyOrder(order.id))}>
+                  Cancel
+                </Button>
               </td>
             </tr>
           );

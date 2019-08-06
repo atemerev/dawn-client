@@ -1,8 +1,9 @@
-import { getOr, get, map, flow } from 'lodash/fp';
+import { get, map, flow } from 'lodash/fp';
 import { format as formatDate } from 'date-fns/fp';
 import { createSelector } from 'reselect';
 import { struct } from '../../../modules/fpUtils';
 import { formatMoney } from '../../../modules/i18n';
+import { STORE_KEY } from '../duck';
 
 const getDate = formatDate('yyyy-MM-dd HH:mm:ss.SSS');
 const toDate = string => new Date(string);
@@ -13,7 +14,7 @@ const sideMapping = {
 };
 
 const getMyOrders = createSelector(
-  getOr([], ['myOrders']),
+  get([STORE_KEY, 'myOrders']),
   map(
     struct({
       id: get(['id']),

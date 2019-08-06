@@ -2,13 +2,14 @@ import { get, map, flow, toUpper } from 'lodash/fp';
 import { format as formatDate } from 'date-fns/fp';
 import { createSelector } from 'reselect';
 import { struct, mapProps } from '../../../modules/fpUtils';
+import { BITMEX_STORE_KEY } from '../../../modules/bitmex';
 import { formatMoney } from '../../../modules/i18n';
 
 const getDate = formatDate('HH:mm:ss.SSS');
 const toDate = string => new Date(string);
 
 const getSortedTrades = createSelector(
-  get(['trades']),
+  get([BITMEX_STORE_KEY, 'trades']),
   flow(
     map(
       struct({
