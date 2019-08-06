@@ -26,8 +26,8 @@ export const isOrderBookProper = state => {
 export const trimOrderBook = ({ symbol, bids, offers }, maxOrders) =>
   createOrderBook({
     symbol,
-    bids: take(bids, maxOrders),
-    offers: take(offers, maxOrders),
+    bids: take(maxOrders, bids),
+    offers: take(maxOrders, offers),
   });
 
 export const insertOrder = function(state, { side, id, price, amount }) {
@@ -53,10 +53,9 @@ export const deleteOrder = (state, { side, id }) => {
   const key = side === 'bid' ? 'bids' : 'offers';
   const line = [...state[key]];
 
-  const idxById = _.findIndex(line, e => e.id == id, 0); // eslint-disable-line eqeqeq
+  const idxById = _.findIndex(line, e => e.id === id, 0);
 
-  // eslint-disable-next-line eqeqeq
-  if (idxById != -1) {
+  if (idxById !== -1) {
     line.splice(idxById, 1);
   } else {
     console.log(`Error: order (delete) not found. Id: ${id}, side: ${side}`);
