@@ -1,9 +1,8 @@
 import React, { memo } from 'react';
 import Select from 'react-select';
+import { Field } from 'redux-form';
 import { Form } from 'react-bootstrap';
 import { find } from 'lodash/fp';
-import { useBitmex } from '../../../modules/bitmex';
-import bitmexSelector from './bitmexSelector';
 
 import cn from './styles.css';
 
@@ -15,23 +14,46 @@ const options = [
   { value: 1000, label: '1000' },
 ];
 
-export default memo(() => {
-  const {
-    state: { span: value },
-    updateParams,
-  } = useBitmex(bitmexSelector);
+export const INITIAL_VALUE = options[0].value;
+
+const SelectControl = ({
+  className,
+  id,
+  input,
+  readOnly,
+  selectProps = {},
+}) => {
+  const option = find({ value: input.value }, options);
 
   return (
-    <Form.Group controlId="formSpanSelector" className={cn.root}>
-      <Form.Label className={cn.label}>Display width, USD:</Form.Label>
-      <Form.Control
-        as={Select}
-        classNamePrefix="react-select"
-        clearable={false}
-        value={find({ value }, options)}
-        onChange={({ value }) => updateParams({ span: parseInt(value, 10) })}
-        options={options}
-      />
-    </Form.Group>
+    <Select
+      {...selectProps}
+      {...input}
+      id={id}
+      readOnly={readOnly}
+      className={className}
+      value={option}
+      onChange={({ value }) => input.onChange(parseInt(value, 10))}
+      onBlur={() => input.onBlur(option.value)}
+    />
   );
-});
+};
+
+const FieldSelectControl = props => (
+  <Field {...props} component={SelectControl} />
+);
+
+export default memo(() => (
+  <Form.Group controlId="formSpanSelector" className={cn.root}>
+    <Form.Label className={cn.label}>Display width, USD:</Form.Label>
+    <Form.Control
+      name="span"
+      as={FieldSelectControl}
+      selectProps={{
+        classNamePrefix: 'react-select',
+        clearable: false,
+        options,
+      }}
+    />
+  </Form.Group>
+));

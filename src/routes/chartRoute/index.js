@@ -1,15 +1,23 @@
 import React, { Fragment } from 'react';
 import { Row, Col } from 'react-bootstrap';
+import { reduxForm } from 'redux-form';
 import DepthChart from './DepthChart';
 import SpanSelector from './SpanSelector';
 import OrdersBar from './OrdersBar';
 import OpenOrdersTable from './OpenOrdersTable';
 import OrdersHistoryTable from './OrdersHistoryTable';
 import InfoBar from './InfoBar';
+import { FORM_NAME } from './form';
+import formInitialValues from './formInitialValues';
+
+import reducer from './duck';
 
 import cn from './styles.css';
 
-const Content = () => (
+const Content = reduxForm({
+  form: FORM_NAME,
+  initialValues: formInitialValues,
+})(() => (
   <Fragment>
     <InfoBar />
     <Row>
@@ -36,8 +44,10 @@ const Content = () => (
       </Col>
     </Row>
   </Fragment>
-);
+));
 
 export default props => ({
   contentNode: <Content {...props} />,
 });
+
+export { reducer };

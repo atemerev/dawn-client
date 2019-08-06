@@ -7,8 +7,8 @@
     "start": "parcel src/index.html",
     "clean": "rm dist/bundle.js",
     "build-prod": "parcel build src/index.html",
-    "lint": "eslint src --ext .js,.json,.jsx",
-    "lint-fix": "yarn lint --fix"
+    "lint-js": "eslint src --ext .js,.json,.jsx,ts",
+    "lint-ts": "tslint --format stylish --project tsconfig.json"
   },
   "husky": {
     "hooks": {
@@ -16,8 +16,13 @@
     }
   },
   "lint-staged": {
-    "*.js": [
-      "yarn lint-fix"
+    "*.{js,json,jsx}": [
+      "yarn lint-js --fix",
+      "git add ."
+    ],
+    "*.{ts,tsx}": [
+      "yarn lint-ts --fix",
+      "git add ."
     ]
   },
   "author": "Alexander Temerev",
@@ -36,17 +41,20 @@
     "@vx/text": "0.0.190",
     "bootstrap": "4.3.1",
     "bootswatch": "4.3.1",
+    "classnames": "2.2.6",
     "crypto-js": "3.1.9-1",
     "date-fns": "2.0.0-beta.3",
     "lodash": "4.17.14",
-    "moize": "5.4.4",
     "prop-types": "15.7.2",
     "react": "16.8.6",
     "react-bootstrap": "1.0.0-beta.10",
     "react-dom": "16.8.6",
+    "react-redux": "7.1.0",
     "react-select": "3.0.4",
     "react-table": "6.10.0",
     "react-transition-group": "4.2.1",
+    "redux": "4.0.4",
+    "redux-form": "8.2.5",
     "reselect": "4.0.0",
     "shallowequal": "1.1.0"
   },
@@ -56,6 +64,7 @@
     "@babel/plugin-transform-runtime": "^7.4.4",
     "@babel/preset-env": "^7.5.4",
     "@babel/preset-react": "^7.0.0",
+    "@typescript-eslint/parser": "1.13.0",
     "autoprefixer": "9.6.1",
     "babel-eslint": "10.0.2",
     "eslint": "6.1.0",
@@ -71,7 +80,12 @@
     "lint-staged": "9.2.1",
     "parcel-bundler": "^1.12.3",
     "postcss-modules": "1.4.1",
-    "prettier": "1.18.2"
+    "prettier": "1.18.2",
+    "tslint": "5.18.0",
+    "tslint-config-airbnb": "5.11.1",
+    "tslint-config-prettier": "1.18.0",
+    "tslint-plugin-prettier": "2.0.1",
+    "typescript": "3.5.3"
   },
   "babel": {
     "presets": [

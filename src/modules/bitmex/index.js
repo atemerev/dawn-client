@@ -1,5 +1,16 @@
 import useBitmex from './useBitmex';
-import Bitmex from './BitmexConstructor';
-import BitmexProvider from './BitmexProvider';
+import bitmexReducer, { STORE_KEY as BITMEX_STORE_KEY } from './duck';
+import {
+  createOrderBook,
+  hirschOrderBookVolumes,
+  isOrderBookProper,
+} from './orderBook';
 
-export { useBitmex, Bitmex, BitmexProvider };
+export {
+  BITMEX_STORE_KEY,
+  bitmexReducer,
+  createOrderBook,
+  hirschOrderBookVolumes,
+  isOrderBookProper,
+  useBitmex,
+};

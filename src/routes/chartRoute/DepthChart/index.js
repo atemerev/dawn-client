@@ -9,9 +9,9 @@ import { curveStepAfter } from '@vx/curve';
 import { GridRows } from '@vx/grid';
 import { GlyphTriangle } from '@vx/glyph';
 import { Text } from '@vx/text';
-import moize from 'moize';
-import { useBitmex } from '../../../modules/bitmex';
-import bitmexSelector from './bitmexSelector';
+import { useSelector, useDispatch } from 'react-redux';
+import { addMyOrder } from '../duck';
+import propsSelector from './propsSelector';
 
 import cn from './styles.css';
 
@@ -24,11 +24,11 @@ const margin = {
 
 let nowTs = new Date().getTime();
 
-const GroupMem = moize.reactSimple(Group);
-const AxisBottomMem = moize.reactSimple(AxisBottom);
-const AxisRightMem = moize.reactSimple(AxisRight);
-const GridRowsMem = moize.reactSimple(GridRows);
-const AreaClosedMem = moize.reactSimple(AreaClosed);
+const GroupMem = memo(Group);
+const AxisBottomMem = memo(AxisBottom);
+const AxisRightMem = memo(AxisRight);
+const GridRowsMem = memo(GridRows);
+const AreaClosedMem = memo(AreaClosed);
 
 const roundUpTo = function(value, step) {
   return Math.round(value / step) * step;
@@ -74,10 +74,8 @@ function PendingOrders(props) {
 /* eslint-enable */
 
 function UnboundDepthChart({ parentHeight, parentWidth }) {
-  const {
-    state: { data, span, myOrders },
-    addMyOrder,
-  } = useBitmex(bitmexSelector);
+  const { data, span, myOrders } = useSelector(propsSelector);
+  const dispatch = useDispatch();
 
   const [tooltipX, setTooltipX] = useState(-1);
   const [orderAmount] = useState(200);
@@ -152,7 +150,7 @@ function UnboundDepthChart({ parentHeight, parentWidth }) {
 
       console.log(JSON.stringify(pendingOrder));
 
-      addMyOrder(pendingOrder);
+      dispatch(addMyOrder(pendingOrder));
     }
   };
 

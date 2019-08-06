@@ -26,15 +26,7 @@
     "no-shadow": 0,
     "no-underscore-dangle": 0,
     "no-param-reassign": 0,
-    "prettier/prettier": [
-      "error",
-      {
-        "singleQuote": true,
-        "trailingComma": "all",
-        "bracketSpacing": true,
-        "jsxBracketSameLine": false
-      }
-    ],
+    "prettier/prettier": [ "error" ],
     "react/destructuring-assignment": 0,
     "react/jsx-filename-extension": 0,
     "react/jsx-wrap-multilines": 0,
