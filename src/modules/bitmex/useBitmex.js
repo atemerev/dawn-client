@@ -5,6 +5,7 @@ import { BitmexContext } from './BitmexProvider';
 
 export default (stateSelector = noop) => {
   const bitmexClient = useContext(BitmexContext);
+
   const [state, setState] = useState(
     stateSelector(bitmexClient.getState(), bitmexClient.getParams()),
   );

@@ -30,7 +30,7 @@ const wsReducer = (
   {
     type,
     payload: {
-      data: { table = '', action, data } = {},
+      data: { table = '', action, data = [] } = {},
       params: { span, symbol } = {},
     } = {},
   },
@@ -98,7 +98,7 @@ const wsReducer = (
     }
   } else if (table === 'trade') {
     if (action === 'insert' || action === 'partial') {
-      let { trades } = state;
+      let { trades = [] } = state;
 
       trades = [...data.reverse(), ...trades];
 
