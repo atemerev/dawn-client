@@ -4,7 +4,7 @@ import connectBitmex from './connectBitmex';
 import updateBitmexState from './updateBitmexState';
 import { setBitmex, resetBitmex } from './duck';
 
-const throttleMs = 1000;
+const throttleMs = 100;
 
 export default () => {
   const dispatch = useDispatch();
